@@ -5,20 +5,59 @@
     <title>Register</title>
 </head>
 <body>
-    <form action="{{url_for('register')}}" method="post">
+    {% include "flashmess.html" %}
+    <form action="/register" method="post" onsubmit="return validationn()">
         <label>Username</label>
-        <input type="text" name="username" required>
+        <input type="text" name="username" id="username" required minlength="6" maxlength="25">
+        <span class="text-danger font-weight-bold" id="usernamespan"></span><br><br>
         <label>Password</label>
-        <input type="password" name="password" required>
+        <input type="password" name="password" id="password" minlength="8" maxlength="15"required>
+        <span class="text-danger font-weight-bold" id="passwordspan"></span><br><br>
         <label>User Type</label>
         <select name="role" required>
             <option value="">Select-Role</option>
             <option value="admin">Desk Executive</option>
             <option value="pharmacist">Pharmacist</option>
             <option value="diagnostic">Diagnostics Executive</option>
-        </select>
-        <button type="submit" name="submit">Submit</button>
+        </select><br><br>
+        <button type="submit" name="submit" value="submit">Submit</button>
     </form>
 <a href="{{url_for('login')}}">Already registered? Login here</a>
 </body>
+
+<script type="text/javascript">
+    function validationn() {
+        var validate=true;
+        
+        document.getElementById("usernamespan").innerHTML="";
+        document.getElementById("passwordspan").innerHTML = "";
+        var username = document.getElementById("username").value;
+        
+        if (!username.match("^[a-zA-Z][a-zA-Z0-9]+$")) {
+            document.getElementById("usernamespan").innerHTML = "Username should be alphanumeric!"
+            validate=false;
+        }
+
+        //Patient name
+        var password = document.getElementById("password").value;
+        console.log(password);
+        // console.log(password.match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$"))
+        var re =/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}/
+        
+
+        // if (!password.match(regex)) {
+            if (!re.test(password)) {
+            document.getElementById("passwordspan").innerHTML = "Password must contain at least one lowercase,uppercase,digit and special character!";
+            validate=false;
+        }
+        return validate;
+        
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        window.history.replaceState("", "", window.location.href);
+    });
+</script>
+
 </html>

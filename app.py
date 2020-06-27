@@ -11,6 +11,8 @@ db = SQLAlchemy(app)
 from models import User, Patient
 migrate = Migrate(app, db)
 
+db.engine.execute("ALTER TABLE userstore AUTO_INCREMENT = 100000001;")
+db.engine.execute("ALTER TABLE patients AUTO_INCREMENT = 100000001;")
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -69,6 +71,9 @@ def register():
                 return redirect(url_for('login'))
             else:
                 flash('User already exists', 'danger')
+    else:
+        if session.get('username'):
+            return redirect(url_for('login'))
     return render_template('register.html')
 
 #==========Admin=========================

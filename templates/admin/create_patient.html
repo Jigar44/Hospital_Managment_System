@@ -1,50 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Create Patient</title>
 
     <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 </head>
+
 <body>
-<form action="{{url_for('create_patient')}}" method="post">
-    <label>SSN ID</label>
-    <input maxlength="9" min="1" minlength="9" name="ssnid" required type="number">
-    <label>Patient Name</label>
-    <input name="pname" required type="text">
-    <label>Age</label>
-    <input max="100" min="1" name="age" required type="number">
-    <label>Date of Admission</label>
-    <input name="admitdate" required type="date">
-    <label>Type of Bed</label>
-    <select name="bedtype" required>
-        <option value="">Select bed type</option>
-        <option value="general">General Ward</option>
-        <option value="semi">Semi Sharing</option>
-        <option value="single">Single Room</option>
-    </select>
-    <label>Address</label>
-    <textarea cols="50" name="address" rows="5"></textarea>
+    {% include 'flashmess.html' %}
 
-    <select id="state" name="state">
-        <option disabled selected value="">Select state......</option>
-    </select>
+    <form action="/admin/create_patient" method="post" onsubmit="return validation()">
+        <label>SSN ID</label>
+        <input name="ssnid" id="ssnid" required type="number" />
+        <span class="text-danger font-weight-bold" id="ssnidspan"></span>
+        <br /><br />
+        <label>Patient Name</label>
+        <input name="pname" id="pname" required type="text" />
+        <span class="text-danger font-weight-bold" id="pnamespan"></span>
+        <br /><br />
+        <label>Age</label>
+        <input max="120" min="0" name="age" id="age" required type="number" />
+        <span class="text-danger font-weight-bold" id="agespan"></span>
+        <br /><br />
+        <label>Date of Admission</label>
+        <input name="admitdate" id="admitdate" required type="date" min="1990-01-01" max="2100-12-31" />
+        <span class="text-danger font-weight-bold" id="admitdatespan"></span>
+        <br /><br />
+        <label>Type of Bed</label>
+        <select name="bedtype" required>
+            <option value="">Select bed type</option>
+            <option value="general">General Ward</option>
+            <option value="semi">Semi Sharing</option>
+            <option value="single">Single Room</option>
+        </select>
+        <br /><br />
+        <label> Address </label>
+        <textarea cols="5" name="address" rows="1" required></textarea>
+        <br /><br />
+        <label>State : </label>
+        <select id="state" name="state" required>
+            <option disabled selected value="">Select state......</option>
+        </select>
+        <br /><br />
+        <label>City : </label>
+        <select id="city" name="city" required>
+            <option disabled selected value="">Select city......</option>
+        </select>
+        <br /><br />
+        <button name="submit" required type="submit" value="Submit">
+            Submit
+        </button>
 
-
-    <select id="city" name="city">
-        <option disabled selected value="">Select city......</option>
-    </select>
-    <button name="submit" required type="submit" value="Submit">
-        Submit
-    </button>
-    <button name="submit" required type="reset" value="Reset">
-        Reset
-    </button>
-</form>
+        <br /><br />
+        <button name="submit" required type="reset" value="Reset">
+            Reset
+        </button>
+    </form>
 </body>
 <!-- For State And City interdependent Dropdown -->
+
+<script type="text/javascript">
+    function validation() {
+        var validate=true
+        document.getElementById("ssnidspan").innerHTML="";
+        document.getElementById("pnamespan").innerHTML = "";
+        var ssnid = document.getElementById("ssnid").value
+
+
+        if (ssnid.length != 9) {
+            document.getElementById("ssnidspan").innerHTML = "Enter 9 digit SSNID, given input length is :"+ssnid.length;
+            validate=false
+        }
+
+        //Patient name
+        var pname = document.getElementById("pname").value
+        // console.log("Pname : "+ pname)
+        // console.log(pname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$"))
+        if (!pname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$")) {
+            document.getElementById("pnamespan").innerHTML = "Enter appropriate Patient Name";
+            validate=false
+        }
+        return validate
+        
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        window.history.replaceState("", "", window.location.href);
+    });
+</script>
+
 <script>
     $(document).ready(function () {
 
@@ -65,8 +114,7 @@
             $.each(data, function (key, value) {
                 if (id == 'state') {
                     html_code += '<option value="' + key + '">' + value[id] + '</option>';
-                }
-                else if (id == 'city') {
+                } else if (id == 'city') {
 
                     if (parent_id != null) {
                         html_code += '<option value="' + key + '">' + value + '</option>';
@@ -81,12 +129,11 @@
             var state_id = $(this).val();
             if (state_id != '') {
                 load_json_data('city', state_id);
-            }
-            else {
+            } else {
                 $('#city').html('<option value="">Select city</option>');
             }
         });
     });
-
 </script>
+
 </html>
