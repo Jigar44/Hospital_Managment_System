@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+    <form action="{{url_for('register')}}" method="post">
+        <label>Username</label>
+        <input type="text" name="username" required>
+        <label>Password</label>
+        <input type="password" name="password" required>
+        <label>User Type</label>
+        <select name="role" required>
+            <option value="">Select-Role</option>
+            <option value="admin">Desk Executive</option>
+            <option value="pharmacist">Pharmacist</option>
+            <option value="diagnostic">Diagnostics Executive</option>
+        </select>
+        <button type="submit" name="submit">Submit</button>
+    </form>
+<a href="{{url_for('login')}}">Already registered? Login here</a>
+</body>
+</html>

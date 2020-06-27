@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Patient</title>
+
+    <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+</head>
+<body>
+<form action="{{url_for('create_patient')}}" method="post">
+    <label>SSN ID</label>
+    <input maxlength="9" min="1" minlength="9" name="ssnid" required type="number">
+    <label>Patient Name</label>
+    <input name="pname" required type="text">
+    <label>Age</label>
+    <input max="100" min="1" name="age" required type="number">
+    <label>Date of Admission</label>
+    <input name="admitdate" required type="date">
+    <label>Type of Bed</label>
+    <select name="bedtype" required>
+        <option value="">Select bed type</option>
+        <option value="general">General Ward</option>
+        <option value="semi">Semi Sharing</option>
+        <option value="single">Single Room</option>
+    </select>
+    <label>Address</label>
+    <textarea cols="50" name="address" rows="5"></textarea>
+
+    <select id="state" name="state">
+        <option disabled selected value="">Select state......</option>
+    </select>
+
+
+    <select id="city" name="city">
+        <option disabled selected value="">Select city......</option>
+    </select>
+    <button name="submit" required type="submit" value="Submit">
+        Submit
+    </button>
+    <button name="submit" required type="reset" value="Reset">
+        Reset
+    </button>
+</form>
+</body>
+<!-- For State And City interdependent Dropdown -->
+<script>
+    $(document).ready(function () {
+
+        parent_id = null
+        load_json_data('state');
+
+        function load_json_data(id, parent_id) {
+            var data = JSON.parse('{{ data | tojson | safe}}');
+            var html_code = '';
+            html_code += '<option value="">Select ' + id + '</option>';
+            if (id == 'state') {
+                data = data['states']
+            }
+            if (id == 'city') {
+                data = data['states'][parent_id]['city']
+            }
+
+            $.each(data, function (key, value) {
+                if (id == 'state') {
+                    html_code += '<option value="' + key + '">' + value[id] + '</option>';
+                }
+                else if (id == 'city') {
+
+                    if (parent_id != null) {
+                        html_code += '<option value="' + key + '">' + value + '</option>';
+
+                    }
+                }
+            });
+            $('#' + id).html(html_code);
+        }
+
+        $(document).on('change', '#state', function () {
+            var state_id = $(this).val();
+            if (state_id != '') {
+                load_json_data('city', state_id);
+            }
+            else {
+                $('#city').html('<option value="">Select city</option>');
+            }
+        });
+    });
+
+</script>
+</html>
