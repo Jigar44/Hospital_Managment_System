@@ -1,2 +1,6 @@
 venv
-migrationscl
+migrations
+__pycache__
+.idea
+.vscode
+config.py
