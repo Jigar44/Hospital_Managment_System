@@ -11,13 +11,13 @@
     <br>
     <br>
     <form action="" method="post">
-        <label for="sid">Enter SSN ID</label>
-        <input type="number" name="ssnid" id="ssnid"/>
+        <label for="sid">Enter SSN ID*</label>
+        <input type="number" name="ssnid" id="ssnid" required min="1"/>
         <p>OR!</p>
-        <label for="sid">Enter Patient ID</label>
-        <input type="number" name="pid" id="pid"/>
+        <label for="sid">Enter Patient ID*</label>
+        <input type="number" name="pid" id="pid" required min="1"/>
         <br>
-        <input type="submit" name="submit" value="submit"/>
+        <input type="submit" name="submit" value="submit" required/>
     </form>
     <br>
     <br>
@@ -50,13 +50,13 @@
         </tr>
     </table>
     <form action="/admin/update" method="POST">
-    <input type="hidden" value="{{data.ssnid}}" name="ssnid"/>
+    <input type="hidden" value="{{data.ssnid}}" name="ssnid" />
     <button name="update_patient" value="update" type="submit">Update Patient</a></button>
     </form>
     
-    <form action="/admin/discharge" method="POST" onsubmit="return confirm('Confirm Patient Discharge?!')">
-        <input type="hidden" value="{{data.ssnid}}" name="ssnid"/>
-        <button name="discharge_patient" value="discharge" type="submit">Discharge Patient</a></button>
+    <form action="/admin/delete" method="POST" onsubmit="return confirm('Confirm Patient Delete?!')">
+        <input type="hidden" value="{{data.ssnid}}" name="ssnid" />
+        <button name="delete_patient" value="delete" type="submit">Delete Patient</a></button>
         </form>
     
 
