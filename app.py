@@ -127,18 +127,64 @@ def create_patient():
 
 @app.route('/admin/all_active_patients', methods=['GET', 'POST'])
 def all_active_patients():
-    if session.get('username') and session.get('role') == 'admin' and request.method == 'GET':
-        print('Hello')
-        all_active_patients_list = Patient.query.filter_by(pstatus='active').all()
-        print('All Patients',all_active_patients_list)
-        if all_active_patients_list:
-            return render_template('admin/all_active_patients.html', data=all_active_patients_list)
-        else:
-            flash("There is No Active Patients.", 'danger')
-            return render_template('admin/home.html')
-    return render_template('admin/all_active_patients.html')
+    if session.get('username') and session.get('role') == 'admin':
+        if request.method == 'GET':
+            all_active_patients_list = Patient.query.filter_by(pstatus='active').all()
+            if all_active_patients_list:
+                return render_template('admin/all_active_patients.html', data=all_active_patients_list)
+            else:
+                flash("There is No Active Patients.", 'danger')
+                return render_template('admin/home.html')
+    else:
+        flash("Login first as a Desk Executive", "danger")
+        return redirect(url_for('login'))
 
 
+@app.route('/admin/search_patients',methods=['GET', 'POST'])
+def search_patients():
+    if session.get('username') and session.get('role') == 'admin':
+        if request.method == 'POST':
+            if('ssnid'in request.form):
+                id=request.form['ssnid']
+                patient=Patient.query.filter_by(ssnid=id,pstatus='active').first()
+            elif('pid'in request.form):
+                id=request.form['pid']
+                patient=Patient.query.filter_by(pid=id,pstatus='active').first()
+            if patient!=None:
+                return render_template('admin/search_patients.html',data=patient)
+            else:
+                flash('No Active Patients of ID : '+id)    
+        return render_template('admin/search_patients.html')
+    else:
+        flash("Login first as a Desk Executive", "danger")
+        return redirect(url_for('login'))
+
+@app.route('/admin/update',methods=['GET','POST'])
+def update():
+    if session.get('username') and session.get('role') == 'admin':
+        if request.method == 'POST':
+            print("Request SSNID is : ",request.form['ssnid'])
+            return "Update hello : "+request.form['ssnid']
+        return redirect(url_for('search_patients'))
+    else:
+        flash("Login first as a Desk Executive", "danger")
+        return redirect(url_for('login'))
+
+@app.route('/admin/discharge',methods=['GET','POST'])
+def discharge():
+    if session.get('username') and session.get('role') == 'admin':
+        if request.method == 'POST':
+            ssnid=request.form['ssnid']
+            patient=Patient.query.filter_by(ssnid=ssnid).first()
+            patient.pstatus="discharged"
+            db.session.commit()
+            flash("Patient: ID-{} , Name-{} discharched succefully!".format(patient.ssnid,patient.pname))    
+        return redirect(url_for('search_patients'))
+    else:
+        flash("Login first as a Desk Executive", "danger")
+        return redirect(url_for('login'))        
+
+# ========Pharmacist============
 @app.route('/pharmacist')
 @app.route('/pharmacist/home')
 def pharmacistHome():
