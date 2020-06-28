@@ -1,18 +1,21 @@
-from flask import Flask, render_template, request, session, flash, redirect, url_for
 import json
-from config import Config
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from datetime import datetime
+from flask import Flask, render_template, request, session, flash, redirect, url_for
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+
+from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 from models import User, Patient
+
 migrate = Migrate(app, db)
 
 db.engine.execute("ALTER TABLE userstore AUTO_INCREMENT = 100000001;")
 db.engine.execute("ALTER TABLE patients AUTO_INCREMENT = 100000001;")
+
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -76,7 +79,8 @@ def register():
             return redirect(url_for('login'))
     return render_template('register.html')
 
-#==========Admin=========================
+
+# ==========Admin=========================
 @app.route('/admin')
 @app.route('/admin/home')
 def adminHome():
@@ -88,36 +92,51 @@ def adminHome():
 
 @app.route('/admin/create_patient', methods=['POST', 'GET'])
 def create_patient():
-        p_message = "Patient Created successfully!"
-        if session.get('username') and session.get('role') == 'admin':
-            with open('static/state_city.json') as datafile:
-                data = json.load(datafile)
-            if request.method == 'POST':
-                ssnid = request.form['ssnid']
-                pname = request.form['pname']
-                age = request.form['age']
-                address = request.form['address']
-                skey = int(request.form['state'])
-                ckey = int(request.form['city'])
-                state = data['states'][skey]['state']
-                city = data['states'][skey]['city'][ckey]
-                bedtype = request.form['bedtype']
-                admitdate = request.form['admitdate']
-                if ssnid and pname and age and address and state and city and bedtype and admitdate:
-                    patient = Patient.query.filter_by(ssnid=ssnid).first()
-                    if (patient is None):
-                        patient = Patient(ssnid=ssnid, pname=pname, age=age, address=address, state=state, city=city, bedtype=bedtype, admitdate=admitdate)
-                        db.session.add(patient)
-                        db.session.commit()
-                        flash(p_message, "success")
-                    else:
-                        flash("Patient with SSN ID : " + ssnid + " already exists!", "warning")
-                    return render_template('admin/create_patient.html', data=data)
-            elif request.method == 'GET':
+    p_message = "Patient Created successfully!"
+    if session.get('username') and session.get('role') == 'admin':
+        with open('static/state_city.json') as datafile:
+            data = json.load(datafile)
+        if request.method == 'POST':
+            ssnid = request.form['ssnid']
+            pname = request.form['pname']
+            age = request.form['age']
+            address = request.form['address']
+            skey = int(request.form['state'])
+            ckey = int(request.form['city'])
+            state = data['states'][skey]['state']
+            city = data['states'][skey]['city'][ckey]
+            bedtype = request.form['bedtype']
+            admitdate = request.form['admitdate']
+            if ssnid and pname and age and address and state and city and bedtype and admitdate:
+                patient = Patient.query.filter_by(ssnid=ssnid).first()
+                if patient is None:
+                    patient = Patient(ssnid=ssnid, pname=pname, age=age, address=address, state=state, city=city,
+                                      bedtype=bedtype, admitdate=admitdate)
+                    db.session.add(patient)
+                    db.session.commit()
+                    flash(p_message, "success")
+                else:
+                    flash("Patient with SSN ID : " + ssnid + " already exists!", "warning")
                 return render_template('admin/create_patient.html', data=data)
+        elif request.method == 'GET':
+            return render_template('admin/create_patient.html', data=data)
+    else:
+        flash("Login first as a Desk Executive", "danger")
+        return redirect(url_for('login'))
+
+
+@app.route('/admin/all_active_patients', methods=['GET', 'POST'])
+def all_active_patients():
+    if session.get('username') and session.get('role') == 'admin' and request.method == 'GET':
+        print('Hello')
+        all_active_patients_list = Patient.query.filter_by(pstatus='active').all()
+        print('All Patients',all_active_patients_list)
+        if all_active_patients_list:
+            return render_template('admin/all_active_patients.html', data=all_active_patients_list)
         else:
-            flash("Login first as a Desk Executive", "danger")
-            return redirect(url_for('login'))
+            flash("There is No Active Patients.", 'danger')
+            return render_template('admin/home.html')
+    return render_template('admin/all_active_patients.html')
 
 
 @app.route('/pharmacist')

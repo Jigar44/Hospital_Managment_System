@@ -5,7 +5,8 @@
     <title>Admin</title>
 </head>
 <body>
-    <button type="submit" name="logout"><a href="{{url_for('create_patient')}}">Create Patient</a></button>
+    <button type="submit" name="create_patient"><a href="{{url_for('create_patient')}}">Create Patient</a></button>
+    <button type="submit" name="all_active_patients"><a href="{{url_for('all_active_patients')}}">All Active Patients</a></button>
     <button type="submit" name="logout"><a href="{{url_for('logout')}}">Logout</a></button>
 </body>
 </html>

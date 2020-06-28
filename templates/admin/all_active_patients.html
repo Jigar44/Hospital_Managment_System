@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Active Patients</title>
+</head>
+<body>
+<center><h2>All Active Patients</h2></center>
+<table style="width:100%">
+    <tr>
+        <th>Patient ID</th>
+        <th>SSN ID</th>
+        <th>Patient Name</th>
+        <th>Age</th>
+        <th>Type of Bed</th>
+        <th>Patient Status</th>
+        <th>Address</th>
+        <th>State</th>
+        <th>City</th>
+        <th>Admit Date</th>
+        <th>Created On</th>
+        <th>Updated On</th>
+    </tr>
+
+    {% for patient in data %}
+    <tr>
+        <td>{{patient.pid}}</td>
+        <td>{{patient.ssnid}}</td>
+        <td>{{patient.pname}}</td>
+        <td>{{patient.age}}</td>
+        <td>{{patient.bedtype}}</td>
+        <td>{{patient.pstatus}}</td>
+        <td>{{patient.address}}</td>
+        <td>{{patient.state}}</td>
+        <td>{{patient.city}}</td>
+        <td>{{patient.admitdate}}</td>
+        <td>{{patient.created_on}}</td>
+        <td>{{patient.updated_on}}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+</body>
+</html>

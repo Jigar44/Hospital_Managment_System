@@ -79,7 +79,7 @@
         var pname = document.getElementById("pname").value
         // console.log("Pname : "+ pname)
         // console.log(pname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$"))
-        if (!pname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$")) {
+        if (!pname.match("^[a-zA-Z]+$")) {
             document.getElementById("pnamespan").innerHTML = "Enter appropriate Patient Name";
             validate=false
         }
