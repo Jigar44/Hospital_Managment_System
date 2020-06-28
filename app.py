@@ -12,7 +12,6 @@ db = SQLAlchemy(app)
 from models import User, Patient
 
 migrate = Migrate(app, db)
-
 db.engine.execute("ALTER TABLE userstore AUTO_INCREMENT = 100000001;")
 db.engine.execute("ALTER TABLE patients AUTO_INCREMENT = 100000001;")
 
@@ -163,14 +162,63 @@ def search_patients():
 @app.route('/admin/update',methods=['GET','POST'])
 def update():
     if session.get('username') and session.get('role') == 'admin':
+        with open('static/state_city.json') as datafile:
+            dfile = json.load(datafile)       
         if request.method == 'POST':
-            print("Request SSNID is : ",request.form['ssnid'])
-            return "Update hello : "+request.form['ssnid']
-        return redirect(url_for('search_patients'))
-    else:
-        flash("Login first as a Desk Executive", "danger")
-        return redirect(url_for('login'))
-
+            id=request.form['ssnid']
+            patient = Patient.query.filter_by(ssnid=id).first()            
+            print('hello')
+            if 'update_patient' in request.form:
+                return render_template('admin/update_patient.html',data = patient,statecity=dfile)
+                    
+            if 'confirmupdate' in request.form:
+                print('in patient')
+                ssnid = request.form['ssnid']                
+                pname = request.form['pname']
+                age = request.form['age']
+                admitdate = request.form['admitdate']
+                bedtype = request.form['bedtype']
+                address = request.form['address']
+                skey = int(request.form['state'])
+                ckey = int(request.form['city'])
+                state = dfile['states'][skey]['state']
+                city = dfile['states'][skey]['city'][ckey]
+                
+                if ssnid:                    
+                    patient.ssnid = ssnid
+                if pname:
+                    patient.pname = pname                    
+                if age:
+                    patient.age = age
+                if admitdate:
+                    patient.admitdate = admitdate
+                if bedtype:
+                    patient.bedtype = bedtype
+                if address:
+                    patient.address = address
+                if state:
+                    patient.state = state
+                if city:
+                    patient.city = city
+                print('{} {} {} {} {} {} {} {}'.format(ssnid,pname,age,address,bedtype,admitdate,state,city))
+                if ssnid or pname or age or address or admitdate or bedtype or state or city:
+                    print( 'inside commit')
+                    result = db.session.commit()
+                    print(result)
+                    flash("Patient Updated Successfully")
+                    return redirect(url_for('all_active_patients'))
+                else:
+                    flash("No Changes were made","success")
+                    return render_template("admin/update_patient.html",statecity=dfile)       
+            
+            
+        else:
+            flash("No Patient")
+            return render_template("admin/search_patients.html")                  
+        
+    else: 
+        flash("Login first as a Account Executive","danger")
+    return redirect(url_for('login'))
 @app.route('/admin/delete',methods=['GET','POST'])
 def delete():
     if session.get('username') and session.get('role') == 'admin':

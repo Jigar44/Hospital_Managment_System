@@ -1,6 +1,6 @@
-venv
-migrations
 __pycache__
-.idea
 .vscode
+migrations
+venv
 config.py
+Readme.md
