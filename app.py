@@ -146,14 +146,15 @@ def search_patients():
         if request.method == 'POST':
             if('ssnid'in request.form):
                 id=request.form['ssnid']
-                patient=Patient.query.filter_by(ssnid=id,pstatus='active').first()
+                patient=Patient.query.filter_by(ssnid=id).first()
             elif('pid'in request.form):
                 id=request.form['pid']
-                patient=Patient.query.filter_by(pid=id,pstatus='active').first()
+                patient=Patient.query.filter_by(pid=id).first()
             if patient!=None:
+                flash("Patient Found!")
                 return render_template('admin/search_patients.html',data=patient)
             else:
-                flash('No Active Patients of ID : '+id)    
+                flash('No patient with ID : '+id + " found in the records!")    
         return render_template('admin/search_patients.html')
     else:
         flash("Login first as a Desk Executive", "danger")
@@ -170,15 +171,15 @@ def update():
         flash("Login first as a Desk Executive", "danger")
         return redirect(url_for('login'))
 
-@app.route('/admin/discharge',methods=['GET','POST'])
-def discharge():
+@app.route('/admin/delete',methods=['GET','POST'])
+def delete():
     if session.get('username') and session.get('role') == 'admin':
         if request.method == 'POST':
             ssnid=request.form['ssnid']
             patient=Patient.query.filter_by(ssnid=ssnid).first()
-            patient.pstatus="discharged"
+            db.session.delete(patient)
             db.session.commit()
-            flash("Patient: ID-{} , Name-{} discharched succefully!".format(patient.ssnid,patient.pname))    
+            flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.ssnid,patient.pname))    
         return redirect(url_for('search_patients'))
     else:
         flash("Login first as a Desk Executive", "danger")
