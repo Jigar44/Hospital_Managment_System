@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Admins: Search Patients</title>
+</head>
+<body>
+    {% include 'flashmess.html' %}
+    <br>
+    <br>
+    <form action="" method="post">
+        <label for="sid">Enter SSN ID</label>
+        <input type="number" name="ssnid" id="ssnid"/>
+        <p>OR!</p>
+        <label for="sid">Enter Patient ID</label>
+        <input type="number" name="pid" id="pid"/>
+        <br>
+        <input type="submit" name="submit" value="submit"/>
+    </form>
+    <br>
+    <br>
+    {% if data %}
+    <table style="width:100%">
+        <tr>
+            <th>Patient ID</th>
+            <th>SSN ID</th>
+            <th>Patient Name</th>
+            <th>Age</th>
+            <th>Type of Bed</th>
+            <th>Patient Status</th>
+            <th>Address</th>
+            <th>State</th>
+            <th>City</th>
+            <th>Admit Date</th>
+        </tr>
+    
+        <tr>
+            <td>{{data.pid}}</td>
+            <td>{{data.ssnid}}</td>
+            <td>{{data.pname}}</td>
+            <td>{{data.age}}</td>
+            <td>{{data.bedtype}}</td>
+            <td>{{data.pstatus}}</td>
+            <td>{{data.address}}</td>
+            <td>{{data.state}}</td>
+            <td>{{data.city}}</td>
+            <td>{{data.admitdate}}</td>
+        </tr>
+    </table>
+    <form action="/admin/update" method="POST">
+    <input type="hidden" value="{{data.ssnid}}" name="ssnid"/>
+    <button name="update_patient" value="update" type="submit">Update Patient</a></button>
+    </form>
+    
+    <form action="/admin/discharge" method="POST" onsubmit="return confirm('Confirm Patient Discharge?!')">
+        <input type="hidden" value="{{data.ssnid}}" name="ssnid"/>
+        <button name="discharge_patient" value="discharge" type="submit">Discharge Patient</a></button>
+        </form>
+    
+
+    {% endif %}
+
+
+
+    <br>
+    <br>
+
+    <input type="button" value="Back" onclick="history.back()">
+</body>
+
+<script >
+    $(document).ready(function(){
+$('#ssnid').blur(function(){
+    if($(this).val().length != 0){
+        $('#pid').attr('disabled', true);
+    }
+    else{
+        $('#pid').attr('disabled', false);
+    }       
+});
+$('#pid').blur(function(){
+    if($(this).val().length != 0){
+        $('#ssnid').attr('disabled', true);
+    }
+    else{
+        $('#ssnid').attr('disabled', false);
+    }        
+});
+});
+</script>
+
+<script>
+    $(document).ready(function () {
+        window.history.replaceState("", "", window.location.href);
+    });
+</script>
+
+</html>
+
