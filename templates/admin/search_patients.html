@@ -10,7 +10,7 @@
     {% include 'flashmess.html' %}
     <br>
     <br>
-    <form action="" method="post">
+    <form action="{{url_for('search_patients')}}" method="post">
         <label for="sid">Enter SSN ID*</label>
         <input type="number" name="ssnid" id="ssnid" required min="1"/>
         <p>OR!</p>
@@ -50,12 +50,12 @@
         </tr>
     </table>
     <form action="/admin/update" method="POST">
-    <input type="hidden" value="{{data.ssnid}}" name="ssnid" />
-    <button name="update_patient" value="update" type="submit">Update Patient</a></button>
+    <input type="hidden" value="{{data.pid}}" name="pid" />
+    <button name="update_patient" value="update_patient" type="submit">Update Patient</a></button>
     </form>
     
     <form action="/admin/delete" method="POST" onsubmit="return confirm('Confirm Patient Delete?!')">
-        <input type="hidden" value="{{data.ssnid}}" name="ssnid" />
+        <input type="hidden" value="{{data.pid}}" name="pid" />
         <button name="delete_patient" value="delete" type="submit">Delete Patient</a></button>
         </form>
     

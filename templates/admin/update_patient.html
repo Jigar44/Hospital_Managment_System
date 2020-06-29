@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Patient</title>
+    <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+</head>
+<body>
+    {% include 'flashmess.html' %}
+    <form action="/admin/update" method = 'post'>
+       
+        <label>Old SSN ID</label>
+        <input  readonly type="number" value="{{data.ssnid}}" />
+        <span class="text-danger font-weight-bold" id="ssnidspan"></span>
+        <label>New SSN ID</label>
+        <input type="number" name="ssnid" id="ssnid"/>
+        <br /><br />
+
+
+        <label>Patient ID</label>
+        <input name="pid" id="pid" readonly type="number" value="{{data.pid}}" />
+        <br /><br />
+
+
+        <label>Patient Old Name</label>
+        <input readonly type="text" value="{{ data.pname }}" />
+        <span class="text-danger font-weight-bold" id="pnamespan"></span>
+        <label>Patient New Name</label>
+        <input name="pname" id="pname"  type="text" />
+        <br /><br />
+
+
+        <label>Old Age</label>
+        <input  type="number" readonly value="{{ data.age }}" />
+        <span class="text-danger font-weight-bold" id="agespan"></span>
+        <label>New Age</label>
+        <input type="number"  max="120" min="0" name="age" id="age" />
+        <br /><br />
+
+
+
+
+        <label> Old Date of Admission</label>
+        <input type="date" readonly value="{{data.admitdate}}"/>
+        <span class="text-danger font-weight-bold" id="admitdatespan"></span>
+        <label> New Date of Admission</label>
+        
+        <input name="admitdate" id="admitdate"  type="date" min="1990-01-01" max="2100-12-31" />
+        <br /><br />
+
+
+        <label>Old Type of Bed</label>
+        <input  type="text" value="{{data.bedtype}}" />
+        <label>New Type of Bed</label>
+        <select name="bedtype">
+            <option value="">Select bed type</option>
+            <option value="general">General Ward</option>
+            <option value="semi">Semi Sharing</option>
+            <option value="single">Single Room</option>
+        </select>
+        <br /><br />
+        <label>Old Address </label>
+        <textarea readonly> {{data.address}} </textarea>
+        <label>New Address </label>
+        <textarea cols="5" name="address" rows="1"></textarea>
+        <br /><br />
+
+
+
+        <label for="state">Old State:</label>
+        <input type="text" value="{{data.state}}"/><br>
+        <label for="state">Old City:</label>
+        <input type="text" value="{{data.city}}"/><br>
+        <label> New State : </label>
+        <select id="state" name="state"> 
+         <option disabled selected value="">Select state......</option>
+        </select>
+        <br /><br />
+        <label> New City : </label>
+        <select id="city" name="city">
+            <option disabled selected value="">Select city......</option>
+        </select>
+        <br /><br />
+        <input type="submit" name="confirmupdate" value="Update">
+    </form>
+
+</body>
+<script type="text/javascript">
+    function validation() {
+        var validate=true
+        document.getElementById("ssnidspan").innerHTML="";
+        document.getElementById("pnamespan").innerHTML = "";
+        var ssnid = document.getElementById("ssnid").value
+
+
+        if (ssnid.length != 9) {
+            document.getElementById("ssnidspan").innerHTML = "Enter 9 digit SSNID, given input length is :"+ssnid.length;
+            validate=false
+        }
+
+        //Patient name
+        var pname = document.getElementById("pname").value
+        // console.log("Pname : "+ pname)
+        // console.log(pname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$"))
+        if (!pname.match("^[a-zA-Z]+$")) {
+            document.getElementById("pnamespan").innerHTML = "Enter appropriate Patient Name";
+            validate=false
+        }
+        return validate
+        
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        window.history.replaceState("", "", window.location.href);
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        parent_id = null
+        load_json_data('state');
+
+        function load_json_data(id, parent_id) {
+            var data = JSON.parse('{{ statecity | tojson | safe}}');
+            var html_code = '';
+            html_code += '<option value="">Select ' + id + '</option>';
+            if (id == 'state') {
+                data = data['states']
+            }
+            if (id == 'city') {
+                data = data['states'][parent_id]['city']
+            }
+
+            $.each(data, function (key, value) {
+                if (id == 'state') {
+                    html_code += '<option value="' + key + '">' + value[id] + '</option>';
+                } else if (id == 'city') {
+
+                    if (parent_id != null) {
+                        html_code += '<option value="' + key + '">' + value + '</option>';
+
+                    }
+                }
+            });
+            $('#' + id).html(html_code);
+        }
+
+        $(document).on('change', '#state', function () {
+            var state_id = $(this).val();
+            if (state_id != '') {
+                load_json_data('city', state_id);
+            } else {
+                $('#city').html('<option value="">Select city</option>');
+            }
+        });
+    });
+</script>
+
+
+</html>
