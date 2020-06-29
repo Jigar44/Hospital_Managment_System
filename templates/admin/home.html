@@ -19,6 +19,7 @@
             src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 </head>
 <body>
+<<<<<<< HEAD
 <nav class="navbar navbar-dark navbar-expand-sm fixed-top">
     <div class="container">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
@@ -40,6 +41,12 @@
 {% block body %}
 {% endblock %}
 {% include 'admin/footer.html' %}
+=======
+    <button name="create_patient"><a href="{{url_for('create_patient')}}">Create Patient</a></button>
+    <button name="all_active_patients"><a href="{{url_for('all_active_patients')}}">All Active Patients</a></button>
+    <button name="all_active_patients"><a href="{{url_for('search_patients')}}">Search Patients</a></button>
+    <button name="logout"><a href="{{url_for('logout')}}">Logout</a></button>
+>>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
 </body>
 
 </html>

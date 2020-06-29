@@ -10,7 +10,7 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
-from models import User, Patient,MedicineDetails
+from models import User, Patient,MedicineDetails,PatientMedicine
 
 migrate = Migrate(app, db)
 
@@ -143,19 +143,36 @@ def all_active_patients():
 
 @app.route('/admin/search_patients',methods=['GET', 'POST'])
 def search_patients():
+<<<<<<< HEAD
 
     if session.get('username') and session.get('role') == 'admin' or 'pharmacist' or 'diagnostic':
 
+=======
+    if session.get('username'):
+>>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
         if request.method == 'POST':
             if ('ssnid' in request.form):
                 id = request.form['ssnid']
-                patient = Patient.query.filter_by(ssnid=id).first()
+                patient_all = Patient.query.filter_by(ssnid=id).first()
+                patient_active=Patient.query.filter_by(ssnid=id,pstatus='active').first()
             elif ('pid' in request.form):
                 id = request.form['pid']
+<<<<<<< HEAD
                 patient = Patient.query.filter_by(pid=id).first()
             if patient != None:
                 flash("Patient Found!","success")
                 return render_template('admin/search_patients.html', data=patient)
+=======
+                patient_all = Patient.query.filter_by(pid=id).first()
+                patient_active=Patient.query.filter_by(pid=id,pstatus='active').first()
+            if patient_all != None and session.get('role') == 'admin':
+                flash("Patient Found!")
+                return render_template('admin/search_patients.html', data_all=patient_all)
+            # Since Pharmacist can only issue Medicines to Active Patients
+            elif patient_active != None and session.get('role') == 'pharmacist':
+                flash("Patient Found!")
+                return render_template('admin/search_patients.html', data_active=patient_active)
+>>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
             else:
                 flash('No patient with ID : ' + id + " found in the records!","danger")
         return render_template('admin/search_patients.html')
@@ -173,10 +190,10 @@ def update():
             id = request.form['pid']
             patient = Patient.query.filter_by(pid=id).first()
             print('hello')
-            if 'update_patient' in request.form:
+            if request.form['submit']=='update_patient':
                 return render_template('admin/update_patient.html', data=patient, statecity=dfile)
 
-            if 'confirmupdate' in request.form:
+            if request.form['submit']=='confirmupdate':
                 print('in patient')
                 ssnid = request.form['ssnid']
                 pname = request.form['pname']
@@ -235,7 +252,11 @@ def delete():
             patient = Patient.query.filter_by(pid=pid).first()
             db.session.delete(patient)
             db.session.commit()
+<<<<<<< HEAD
             flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname),"success")
+=======
+            flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname))
+>>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
         return redirect(url_for('search_patients'))
     else:
         flash("Login first as a Desk Executive", "danger")
@@ -290,6 +311,50 @@ def resupply_medicines():
                 flash("Medicine Id : {},Quantity updated to : {}".format(medid,medicine.quantity),"success")
         medicine=MedicineDetails.query.filter().all()
         return render_template('pharmacist/resupply.html',med_data=medicine)
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/pharmacist/issuemedicine',methods=['GET','POST'])
+def issuemed_search():
+    if session.get('role')=='pharmacist':
+        print("Request methof",request.method)
+        if request.method=='POST':
+            # print("Request Form",request.form)
+            # print('here in issue post')
+            # if request.form['submit']=='issuemed_search':
+                # pid=request.form['pid']
+                # medicine=MedicineDetails.query.filter().all()
+                # med_issued=PatientMedicine.query.filter_by(pid=pid).all()
+                # print('here in issue med')    
+                # print("Med Issued : ", med_issued)
+                # print("Med Total : ", medicine)
+                # print("Med Total : ", type(medicine))
+            pid=request.form['pid']
+            pname=request.form['pname']
+            pdata={"pid":pid,"pname":pname}
+            if request.form['submit']=='issuemed_add':
+                medname=request.form['medname']
+                quantity=int(request.form['quantity'])
+                medfind=MedicineDetails.query.filter_by(medname=medname).first()
+                print("MedFind : ",medfind)
+                if(medfind is not None and quantity<=medfind.quantity):
+                    patientmedfind=PatientMedicine.query.filter_by(medname=medname).first()
+                    if(patientmedfind is None):
+                        patientmedicine=PatientMedicine(pid=pdata["pid"],medid=medfind.medid,medname=medfind.medname,quantity=quantity,rate=medfind.rate)
+                        db.session.add(patientmedicine)
+                    else:
+                        patientmedfind.quantity+=quantity
+                    db.session.commit()
+                    medfind.quantity-=quantity
+                    db.session.commit()
+                    flash("Medicine issued Succefully!","success")
+                else:
+                    flash("Either Medicine name or invalid Quantity is entered. Refer medecine available table!","danger")
+            medicine=MedicineDetails.query.filter().all()
+            med_issued=PatientMedicine.query.filter_by(pid=pdata["pid"]).all()
+            return render_template('pharmacist/issuemedicine.html',data_medissue=med_issued,data_allmed=medicine,pdata=pdata)
+        return redirect(url_for('pharma_search_patients'))
     else:
         return redirect(url_for('login'))
 
