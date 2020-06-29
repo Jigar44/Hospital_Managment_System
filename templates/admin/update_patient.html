@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Patient</title>
-    <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-</head>
-<body>
-    {% include 'flashmess.html' %}
+{% extends 'admin/home.html' %}
+{% block body %}
+<div class="main">
+    <center><h2>Update Patient</h2></center>
+    <div class="row">
     <form action="/admin/update" method = 'post'>
        
         <label>Old SSN ID</label>
@@ -85,8 +79,8 @@
         <br /><br />
         <input type="submit" name="confirmupdate" value="Update">
     </form>
-
-</body>
+</div>
+</div>
 <script type="text/javascript">
     function validation() {
         var validate=true
@@ -162,4 +156,4 @@
 </script>
 
 
-</html>
+{% endblock %}

@@ -143,9 +143,9 @@ def all_active_patients():
 
 @app.route('/admin/search_patients',methods=['GET', 'POST'])
 def search_patients():
-    
+
     if session.get('username') and session.get('role') == 'admin' or 'pharmacist' or 'diagnostic':
-    
+
         if request.method == 'POST':
             if ('ssnid' in request.form):
                 id = request.form['ssnid']
@@ -154,10 +154,10 @@ def search_patients():
                 id = request.form['pid']
                 patient = Patient.query.filter_by(pid=id).first()
             if patient != None:
-                flash("Patient Found!")
+                flash("Patient Found!","success")
                 return render_template('admin/search_patients.html', data=patient)
             else:
-                flash('No patient with ID : ' + id + " found in the records!")
+                flash('No patient with ID : ' + id + " found in the records!","danger")
         return render_template('admin/search_patients.html')
     else:
         flash("Login first as a Desk Executive", "danger")
@@ -231,11 +231,11 @@ def update():
 def delete():
     if session.get('username') and session.get('role') == 'admin':
         if request.method == 'POST':
-            ssnid = request.form['ssnid']
-            patient = Patient.query.filter_by(ssnid=ssnid).first()
+            pid = request.form['pid']
+            patient = Patient.query.filter_by(pid=pid).first()
             db.session.delete(patient)
             db.session.commit()
-            flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.ssnid, patient.pname))
+            flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname),"success")
         return redirect(url_for('search_patients'))
     else:
         flash("Login first as a Desk Executive", "danger")
@@ -277,9 +277,9 @@ def resupply_medicines():
                     medicine=MedicineDetails(medid=medid,medname=medname,quantity=quantity,rate=rate)
                     db.session.add(medicine)
                     db.session.commit()
-                    flash("New Medicine added succefully!")
+                    flash("New Medicine added succefully!","success")
                 else:
-                    flash("Medicine with Id : {} or Name: {} ,already exist, use update quantity to resupply!".format(medid,medname))
+                    flash("Medicine with Id : {} or Name: {} ,already exist, use update quantity to resupply!".format(medid,medname),"warning")
             elif request.form['submit']=='update':
                 medid=request.form['updatemedid']
                 quantity=int(request.form['updatequantity'])
@@ -287,7 +287,7 @@ def resupply_medicines():
                 medicine=MedicineDetails.query.filter_by(medid=medid).first()
                 medicine.quantity+=quantity
                 db.session.commit()
-                flash("Medicine Id : {},Quantity updated to : {}".format(medid,medicine.quantity))
+                flash("Medicine Id : {},Quantity updated to : {}".format(medid,medicine.quantity),"success")
         medicine=MedicineDetails.query.filter().all()
         return render_template('pharmacist/resupply.html',med_data=medicine)
     else:

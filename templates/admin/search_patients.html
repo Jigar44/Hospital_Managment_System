@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <meta charset="UTF-8">
-    <title>{{session.get('role')}}: Search Patients</title>
-</head>
-<body>
-    {% include 'flashmess.html' %}
-    <br>
-    <br>
+{% extends 'admin/home.html' %}
+{% block body %}
+<div class="main">
+  <div class="row">
+      <center><h2>Search Patient</h2></center>
     <form action="{{url_for('search_patients')}}" method="post">
         <label for="sid">Enter SSN ID*</label>
         <input type="number" name="ssnid" id="ssnid" required min="1"/>
@@ -64,13 +57,9 @@
 
     {% endif %}
 
-
-
-    <br>
-    <br>
-
     <input type="button" value="Back" onclick="history.back()">
-</body>
+</div>
+</div>
 
 <script >
     $(document).ready(function(){
@@ -99,5 +88,4 @@ $('#pid').blur(function(){
     });
 </script>
 
-</html>
-
+{% endblock %}
