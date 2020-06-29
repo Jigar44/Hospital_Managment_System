@@ -25,7 +25,7 @@ event.listen(User.__table__,"after_create",
 DDL(" ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;")
 )
 
-
+#one
 class Patient(db.Model):
     __tablename__ = 'patients'
 
@@ -38,6 +38,7 @@ class Patient(db.Model):
     city = db.Column(db.String(60), nullable=False)
     bedtype = db.Column(db.String(15), nullable=False)
     pstatus = db.Column(db.String(10), nullable=False, default='active')
+    patientmedicine=db.relationship('PatientMedicine', backref='patients', lazy='dynamic',cascade='all, delete-orphan')
     admitdate = db.Column(db.Date, default=datetime.now())
     created_on = db.Column(db.TIMESTAMP, default=datetime.now())
     updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
@@ -56,16 +57,33 @@ class MedicineDetails(db.Model):
     medname = db.Column(db.String(100), nullable=False,unique=True)
     quantity = db.Column(db.Integer, nullable=False)
     rate = db.Column(db.Numeric(10,4), nullable=False)
+    patientmedicine=db.relationship('PatientMedicine', backref='medicine_details', uselist=False)
     created_on = db.Column(db.TIMESTAMP, default=datetime.now())
     updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
-# event.listen(
-#     MedicineDetails.__table__,
-#     "after_create",
-#     DDL("""
-#     ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;
-#     """)
-# )
+#many
+class PatientMedicine(db.Model):
+    __tablename__ = 'patient_medicines'
+
+    id = db.Column(db.Integer, primary_key=True)
+    pid=db.Column(db.Integer, db.ForeignKey('patients.pid',ondelete='CASCADE'))
+    medid = db.Column(db.Integer,db.ForeignKey('medicine_details.medid'))
+    medname = db.Column(db.String(100), nullable=False,unique=True)
+    quantity = db.Column(db.Integer, nullable=False)
+    rate = db.Column(db.Numeric(10,4), nullable=False)
+    amount=db.Column(db.Numeric(10,4), nullable=False,default=(rate*quantity),onupdate=(rate*quantity))
+    created_on = db.Column(db.TIMESTAMP, default=datetime.now())
+    updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
+
+
+
+event.listen(
+    PatientMedicine.__table__,
+    "after_create",
+    DDL("""
+    ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;
+    """)
+)
 
 db.create_all()
 db.session.commit()
