@@ -3,18 +3,16 @@ from datetime import datetime
 from flask import Flask, render_template, request, session, flash, redirect, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy import or_
 from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
-from models import User, Patient
+from models import User, Patient,MedicineDetails
 
 migrate = Migrate(app, db)
 
-db.engine.execute("ALTER TABLE userstore AUTO_INCREMENT = 100000001;")
-db.engine.execute("ALTER TABLE patients AUTO_INCREMENT = 100000001;")
 
 
 @app.route('/')
@@ -84,7 +82,7 @@ def register():
 @app.route('/admin')
 @app.route('/admin/home')
 def adminHome():
-    if request.method == 'GET' and session.get('username'):
+    if session.get('role')=='admin':
         return render_template('admin/home.html')
     else:
         return redirect(url_for('login'))
@@ -140,10 +138,15 @@ def all_active_patients():
         return redirect(url_for('login'))
 
 
+
+
 @app.route('/admin/search_patients',methods=['GET', 'POST'])
 def search_patients():
-    if session.get('username') and session.get('role') == 'admin':
+    
+    if session.get('username') and session.get('role') == 'admin' or 'pharmacist' or 'diagnostic':
+    
         if request.method == 'POST':
+    
             if('ssnid'in request.form):
                 id=request.form['ssnid']
                 patient=Patient.query.filter_by(ssnid=id).first()
@@ -189,16 +192,59 @@ def delete():
 @app.route('/pharmacist')
 @app.route('/pharmacist/home')
 def pharmacistHome():
-    if request.method == 'GET' and session.get('username'):
+    if session.get('role')=='pharmacist':
         return render_template('pharmacist/home.html')
     else:
         return redirect(url_for('login'))
 
+@app.route('/pharmacist/search_patients',methods=['GET','POST'])
+def pharma_search_patients():
+    if session.get('role')=='pharmacist':
+        return search_patients()
+    else:
+        return redirect(url_for('login'))
 
+
+@app.route('/pharmacist/resupply',methods=['GET','POST'])
+def resupply_medicines():
+    if session.get('role')=='pharmacist':
+        if request.method=='POST':
+            if request.form['submit']=='add':
+                # print('here add')
+                medid=request.form['addmedid']
+                medname=request.form['addmedname']
+                medicine=MedicineDetails.query.filter(or_(MedicineDetails.medid==medid,MedicineDetails.medname.like(medname))).all()
+                # print("Med : ",medicine)
+                quantity=request.form['addquantity']
+                rate=request.form['addrate']
+                # Avoiding duplicate entries
+                if not medicine:
+                    medicine=MedicineDetails(medid=medid,medname=medname,quantity=quantity,rate=rate)
+                    db.session.add(medicine)
+                    db.session.commit()
+                    flash("New Medicine added succefully!")
+                else:
+                    flash("Medicine with Id : {} or Name: {} ,already exist, use update quantity to resupply!".format(medid,medname))
+            elif request.form['submit']=='update':
+                medid=request.form['updatemedid']
+                quantity=int(request.form['updatequantity'])
+                print("in update med")
+                medicine=MedicineDetails.query.filter_by(medid=medid).first()
+                medicine.quantity+=quantity
+                db.session.commit()
+                flash("Medicine Id : {},Quantity updated to : {}".format(medid,medicine.quantity))
+        medicine=MedicineDetails.query.filter().all()
+        return render_template('pharmacist/resupply.html',med_data=medicine)
+    else:
+        return redirect(url_for('login'))
+
+
+
+# ========Diagnostic============
 @app.route('/diagnostic')
 @app.route('/diagnostic/home')
 def diagnosticHome():
-    if request.method == 'GET' and session.get('username'):
+    if request.method == 'GET' and session.get('role')=='diagnostic':
         return render_template('diagnostic/home.html')
     else:
         return redirect(url_for('login'))

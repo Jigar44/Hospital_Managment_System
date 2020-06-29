@@ -5,7 +5,9 @@
     <title>Pharmacist</title>
 </head>
 <body>
-        <button type="submit" name="logout"><a href="{{url_for('logout')}}">Logout</a></button>
+    <button name="show_patients"><a href="{{url_for('pharma_search_patients')}}">Search Patient</a></button>
+    <button name="resupply"><a href="{{url_for('resupply_medicines')}}">Add/Resupply Medicines</a></button>
+    <button type="submit" name="logout"><a href="{{url_for('logout')}}">Logout</a></button>
 
 </body>
 </html>

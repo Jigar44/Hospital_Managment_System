@@ -4,7 +4,7 @@
     <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <meta charset="UTF-8">
-    <title>Admins: Search Patients</title>
+    <title>{{session.get('role')}}: Search Patients</title>
 </head>
 <body>
     {% include 'flashmess.html' %}
@@ -21,7 +21,8 @@
     </form>
     <br>
     <br>
-    {% if data %}
+
+    {% if data and session.get('role')=='admin' %}
     <table style="width:100%">
         <tr>
             <th>Patient ID</th>
@@ -49,6 +50,7 @@
             <td>{{data.admitdate}}</td>
         </tr>
     </table>
+    
     <form action="/admin/update" method="POST">
     <input type="hidden" value="{{data.ssnid}}" name="ssnid" />
     <button name="update_patient" value="update" type="submit">Update Patient</a></button>
