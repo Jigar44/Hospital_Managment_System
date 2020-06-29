@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+
 from flask import Flask, render_template, request, session, flash, redirect, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -139,55 +140,61 @@ def all_active_patients():
         return redirect(url_for('login'))
 
 
-@app.route('/admin/search_patients',methods=['GET', 'POST'])
+@app.route('/admin/search_patients', methods=['GET', 'POST'])
 def search_patients():
     if session.get('username') and session.get('role') == 'admin':
         if request.method == 'POST':
-            if('ssnid'in request.form):
-                id=request.form['ssnid']
-                patient=Patient.query.filter_by(ssnid=id).first()
-            elif('pid'in request.form):
-                id=request.form['pid']
-                patient=Patient.query.filter_by(pid=id).first()
-            if patient!=None:
+            if ('ssnid' in request.form):
+                id = request.form['ssnid']
+                patient = Patient.query.filter_by(ssnid=id).first()
+            elif ('pid' in request.form):
+                id = request.form['pid']
+                patient = Patient.query.filter_by(pid=id).first()
+            if patient != None:
                 flash("Patient Found!")
-                return render_template('admin/search_patients.html',data=patient)
+                return render_template('admin/search_patients.html', data=patient)
             else:
-                flash('No patient with ID : '+id + " found in the records!")    
+                flash('No patient with ID : ' + id + " found in the records!")
         return render_template('admin/search_patients.html')
     else:
         flash("Login first as a Desk Executive", "danger")
         return redirect(url_for('login'))
 
-@app.route('/admin/update',methods=['GET','POST'])
+
+@app.route('/admin/update', methods=['GET', 'POST'])
 def update():
     if session.get('username') and session.get('role') == 'admin':
         with open('static/state_city.json') as datafile:
-            dfile = json.load(datafile)       
+            dfile = json.load(datafile)
         if request.method == 'POST':
-            id=request.form['ssnid']
-            patient = Patient.query.filter_by(ssnid=id).first()            
+            id = request.form['pid']
+            patient = Patient.query.filter_by(pid=id).first()
             print('hello')
             if 'update_patient' in request.form:
-                return render_template('admin/update_patient.html',data = patient,statecity=dfile)
-                    
+                return render_template('admin/update_patient.html', data=patient, statecity=dfile)
+
             if 'confirmupdate' in request.form:
                 print('in patient')
-                ssnid = request.form['ssnid']                
+                ssnid = request.form['ssnid']
                 pname = request.form['pname']
                 age = request.form['age']
                 admitdate = request.form['admitdate']
                 bedtype = request.form['bedtype']
                 address = request.form['address']
-                skey = int(request.form['state'])
-                ckey = int(request.form['city'])
-                state = dfile['states'][skey]['state']
-                city = dfile['states'][skey]['city'][ckey]
-                
-                if ssnid:                    
+                state = None
+                city = None
+                print(request.form)
+                if request.form['state'] is not '':
+                    skey = int(request.form['state'])
+                    state = dfile['states'][skey]['state']
+                    if request.form['city'] is not '':
+                        ckey = int(request.form['city'])
+                        city = dfile['states'][skey]['city'][ckey]
+
+                if ssnid:
                     patient.ssnid = ssnid
                 if pname:
-                    patient.pname = pname                    
+                    patient.pname = pname
                 if age:
                     patient.age = age
                 if admitdate:
@@ -200,40 +207,40 @@ def update():
                     patient.state = state
                 if city:
                     patient.city = city
-                print('{} {} {} {} {} {} {} {}'.format(ssnid,pname,age,address,bedtype,admitdate,state,city))
+                print('{} {} {} {} {} {} {} {}'.format(ssnid, pname, age, address, bedtype, admitdate, state, city))
                 if ssnid or pname or age or address or admitdate or bedtype or state or city:
-                    print( 'inside commit')
+                    print('inside commit')
                     result = db.session.commit()
                     print(result)
                     flash("Patient Updated Successfully")
                     return redirect(url_for('all_active_patients'))
                 else:
-                    flash("No Changes were made","success")
-                    return render_template("admin/update_patient.html",statecity=dfile)       
-            
-            
-        else:
-            flash("No Patient")
-            return render_template("admin/search_patients.html")                  
-        
-    else: 
-        flash("Login first as a Account Executive","danger")
+                    flash("No Changes were made", "warning")
+                    # return render_template("admin/update_patient.html", statecity=dfile)
+        # else:
+        return render_template("admin/search_patients.html")
+    else:
+        flash("Login first as a Desk Executive", "danger")
     return redirect(url_for('login'))
-@app.route('/admin/delete',methods=['GET','POST'])
+
+
+@app.route('/admin/delete', methods=['GET', 'POST'])
 def delete():
     if session.get('username') and session.get('role') == 'admin':
         if request.method == 'POST':
-            ssnid=request.form['ssnid']
-            patient=Patient.query.filter_by(ssnid=ssnid).first()
+            ssnid = request.form['ssnid']
+            patient = Patient.query.filter_by(ssnid=ssnid).first()
             db.session.delete(patient)
             db.session.commit()
-            flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.ssnid,patient.pname))    
+            flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.ssnid, patient.pname))
         return redirect(url_for('search_patients'))
     else:
         flash("Login first as a Desk Executive", "danger")
-        return redirect(url_for('login'))        
+        return redirect(url_for('login'))
 
-# ========Pharmacist============
+    # ========Pharmacist============
+
+
 @app.route('/pharmacist')
 @app.route('/pharmacist/home')
 def pharmacistHome():
