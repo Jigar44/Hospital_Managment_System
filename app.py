@@ -143,13 +143,7 @@ def all_active_patients():
 
 @app.route('/admin/search_patients',methods=['GET', 'POST'])
 def search_patients():
-<<<<<<< HEAD
-
-    if session.get('username') and session.get('role') == 'admin' or 'pharmacist' or 'diagnostic':
-
-=======
     if session.get('username'):
->>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
         if request.method == 'POST':
             if ('ssnid' in request.form):
                 id = request.form['ssnid']
@@ -157,12 +151,6 @@ def search_patients():
                 patient_active=Patient.query.filter_by(ssnid=id,pstatus='active').first()
             elif ('pid' in request.form):
                 id = request.form['pid']
-<<<<<<< HEAD
-                patient = Patient.query.filter_by(pid=id).first()
-            if patient != None:
-                flash("Patient Found!","success")
-                return render_template('admin/search_patients.html', data=patient)
-=======
                 patient_all = Patient.query.filter_by(pid=id).first()
                 patient_active=Patient.query.filter_by(pid=id,pstatus='active').first()
             if patient_all != None and session.get('role') == 'admin':
@@ -172,7 +160,6 @@ def search_patients():
             elif patient_active != None and session.get('role') == 'pharmacist':
                 flash("Patient Found!")
                 return render_template('admin/search_patients.html', data_active=patient_active)
->>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
             else:
                 flash('No patient with ID : ' + id + " found in the records!","danger")
         return render_template('admin/search_patients.html')
@@ -252,11 +239,8 @@ def delete():
             patient = Patient.query.filter_by(pid=pid).first()
             db.session.delete(patient)
             db.session.commit()
-<<<<<<< HEAD
-            flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname),"success")
-=======
             flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname))
->>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
+# >>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
         return redirect(url_for('search_patients'))
     else:
         flash("Login first as a Desk Executive", "danger")
@@ -320,16 +304,6 @@ def issuemed_search():
     if session.get('role')=='pharmacist':
         print("Request methof",request.method)
         if request.method=='POST':
-            # print("Request Form",request.form)
-            # print('here in issue post')
-            # if request.form['submit']=='issuemed_search':
-                # pid=request.form['pid']
-                # medicine=MedicineDetails.query.filter().all()
-                # med_issued=PatientMedicine.query.filter_by(pid=pid).all()
-                # print('here in issue med')    
-                # print("Med Issued : ", med_issued)
-                # print("Med Total : ", medicine)
-                # print("Med Total : ", type(medicine))
             pid=request.form['pid']
             pname=request.form['pname']
             pdata={"pid":pid,"pname":pname}
