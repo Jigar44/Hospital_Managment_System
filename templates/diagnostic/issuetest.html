@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Pharmacist: Issue Medicine</title>
+  <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+</head>
+{% include 'flashmess.html' %}
+
+<body>
+
+  <!-- Displays All Medecines Currently issued to Specific Patient if any -->
+  {% if data_testissue %}
+  <p>Diagnostic Tests Issued to patient ID: {{pdata['pid']}} | Name : {{pdata['pname']}}</p>
+  <br/>
+  <table style="width: 100%;">
+    <tr>
+      <th>Test ID</th>
+      <th>Test Name</th>
+      <th>Charge</th>
+      <th>Test Done At:</th>
+      
+      
+    </tr>
+    {% for data in data_testissue %}
+    <tr>
+      <th>{{data.testid}}</th>
+      <th>{{data.testname}}</th>
+      <th>{{data.charge}}</th>
+      <th>{{data.created_on}}</th>
+    </tr>
+    {% endfor %}
+  </table>
+
+{% else %}
+<center><h4>No Diagnostic Tests Issued to patient ID: {{pdata['pid']}} | Name : {{pdata['pname']}} found in the Records!</h4></center>
+  {% endif %} 
+  
+  <!-- end show issued medicine -->
+  
+  <!-- show available medicines in the inventory from which pharmacist can issue meds
+     to patient if inventory not empty -->
+     <br>
+     <button id="bissuetestadd">Issue New Tests</button>
+     <br>
+  {% if data_alltest %}
+  
+  
+  <form action="/diagnostic/issuetest" method="post" onsubmit="return addvalidation()" id="issuenewtestform"
+  style="display: none;">
+
+  <input type="hidden" name="pid" value="{{pdata['pid']}}"/>
+  <input type="hidden" name="pname" value="{{pdata['pname']}}"/>
+  <br><br>
+  <label>Select Diagnostic Test From DropDown</label>
+  <br><br>
+  <select name="testname" id="testname" required>
+      <option value="" selected disabled>Select Test ....</option>
+      {% for data in data_alltest %}
+      <option value="{{data}}" id=>{{data}}</option>
+      {% endfor %}
+  </select>
+  <br /><br />
+
+
+  <label>Charge : </label>
+  <input name="charge" id="charge" readonly type="number" step="0.0001" value=/>
+
+  <br /><br />
+
+
+  <button name="submit" type="submit" value="issuetest_add">Confirm Add!</button>
+  <button type="reset" value="Reset">Reset</button>
+</form>
+{% else %}
+
+<p>No Diagnostic Tests Facility is Available! Add Diagnostic Test Facility</p>
+
+
+{% endif %}
+  
+
+  <button name="logout"><a href="{{url_for('logout')}}">Logout</a></button>
+  <input type="button" value="Back" onclick="history.back()" />
+</body>
+
+<!-- ============================= JS validataion=================== -->
+
+
+<!-- <script>
+  $(document).ready(function () {
+    window.history.replaceState("", "", window.location.href);
+  });
+</script> -->
+
+<script>
+  $(document).ready(function () {
+    $("#bissuetestadd").click(function () {
+      $("#issuenewtestform").show();
+      
+    });
+  });
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        var data = JSON.parse('{{ data_alltest | tojson | safe}}');
+        $(document).on('change', '#testname', function () {
+            $('#charge').val(data[$(this).val()])
+        });
+
+    });
+</script>
+
+
+</html>

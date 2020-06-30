@@ -10,7 +10,7 @@ from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
-from models import User, Patient,MedicineDetails,PatientMedicine
+from models import User, Patient,MedicineDetails,PatientMedicine,TestDetails,PatientTest
 
 migrate = Migrate(app, db)
 
@@ -157,7 +157,7 @@ def search_patients():
                 flash("Patient Found!")
                 return render_template('admin/search_patients.html', data_all=patient_all)
             # Since Pharmacist can only issue Medicines to Active Patients
-            elif patient_active != None and session.get('role') == 'pharmacist':
+            elif patient_active != None and (session.get('role') == 'pharmacist' or session.get('role') == 'diagnostic'):
                 flash("Patient Found!")
                 return render_template('admin/search_patients.html', data_active=patient_active)
             else:
@@ -176,12 +176,12 @@ def update():
         if request.method == 'POST':
             id = request.form['pid']
             patient = Patient.query.filter_by(pid=id).first()
-            print('hello')
+            
             if request.form['submit']=='update_patient':
                 return render_template('admin/update_patient.html', data=patient, statecity=dfile)
 
             if request.form['submit']=='confirmupdate':
-                print('in patient')
+            
                 ssnid = request.form['ssnid']
                 pname = request.form['pname']
                 age = request.form['age']
@@ -190,7 +190,7 @@ def update():
                 address = request.form['address']
                 state = None
                 city = None
-                print(request.form)
+                
                 if request.form['state'] is not '':
                     skey = int(request.form['state'])
                     state = dfile['states'][skey]['state']
@@ -214,11 +214,11 @@ def update():
                     patient.state = state
                 if city:
                     patient.city = city
-                print('{} {} {} {} {} {} {} {}'.format(ssnid, pname, age, address, bedtype, admitdate, state, city))
+                
                 if ssnid or pname or age or address or admitdate or bedtype or state or city:
-                    print('inside commit')
+                    
                     result = db.session.commit()
-                    print(result)
+                    
                     flash("Patient Updated Successfully")
                     return redirect(url_for('all_active_patients'))
                 else:
@@ -288,7 +288,7 @@ def resupply_medicines():
             elif request.form['submit']=='update':
                 medid=request.form['updatemedid']
                 quantity=int(request.form['updatequantity'])
-                print("in update med")
+                
                 medicine=MedicineDetails.query.filter_by(medid=medid).first()
                 medicine.quantity+=quantity
                 db.session.commit()
@@ -302,7 +302,7 @@ def resupply_medicines():
 @app.route('/pharmacist/issuemedicine',methods=['GET','POST'])
 def issuemed_search():
     if session.get('role')=='pharmacist':
-        print("Request methof",request.method)
+        
         if request.method=='POST':
             pid=request.form['pid']
             pname=request.form['pname']
@@ -311,7 +311,7 @@ def issuemed_search():
                 medname=request.form['medname']
                 quantity=int(request.form['quantity'])
                 medfind=MedicineDetails.query.filter_by(medname=medname).first()
-                print("MedFind : ",medfind)
+                
                 if(medfind is not None and quantity<=medfind.quantity):
                     patientmedfind=PatientMedicine.query.filter_by(medname=medname).first()
                     if(patientmedfind is None):
@@ -343,6 +343,42 @@ def diagnosticHome():
     else:
         return redirect(url_for('login'))
 
+@app.route('/diagnostic/search_patients',methods=['GET','POST'])
+def diagnostic_search_patients():
+    if session.get('role')=='diagnostic':
+        return search_patients()
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/diagnostic/issuetest',methods=['GET','POST'])
+def issuetest_search():
+    if session.get('role')=='diagnostic':
+        
+        if request.method=='POST':
+            pid=request.form['pid']
+            pname=request.form['pname']
+            pdata={"pid":pid,"pname":pname}
+            if request.form['submit']=='issuetest_add':
+                testname=request.form['testname']
+                charge=request.form['charge']
+                testfind=TestDetails.query.filter_by(testname=testname).first()
+                
+                if(testfind is not None):
+                        patientTest=PatientTest(pid=pdata["pid"],testid=testfind.testid,testname=testname,charge=charge)
+                        db.session.add(patientTest)
+                        db.session.commit()
+                        flash("test issued Succefully!","success")
+                else:
+                    flash("Invalid Diagnostic Test Chosen!","danger")
+            test=TestDetails.query.filter().all()
+            testDict={}
+            for row in test:
+                testDict[row.testname]=float(row.charge)
+            test_issued=PatientTest.query.filter_by(pid=pdata["pid"]).all()
+            return render_template('diagnostic/issuetest.html',data_testissue=test_issued,data_alltest=testDict,pdata=pdata)
+        return redirect(url_for('pharma_search_patients'))
+    else:
+        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)

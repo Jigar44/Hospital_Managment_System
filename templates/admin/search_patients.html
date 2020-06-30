@@ -57,7 +57,7 @@
 
     {% endif %}
 
-    {% if data_active and session.get('role')=='pharmacist' %}
+    {% if data_active and (session.get('role')=='pharmacist' or session.get('role')=='diagnostic') %}
     <table style="width:100%">
         <tr>
             <th>Patient ID</th>
@@ -86,15 +86,22 @@
         </tr>
     </table>
     
-    <form action="{{url_for('issuemed_search')}}" method="POST">
-    <input type="hidden" value="{{data_active.pid}}" name="pid" />
-    <input type="hidden" value="{{data_active.pname}}" name="pname" />
-    <button name="submit" value="issuemed_search" type="submit">Issue New Medicine to Patient</a></button>
-    </form>
-
     {% endif %}
 
-
+{% if data_active and session.get('role')=='pharmacist'  %}
+    <form action="{{url_for('issuemed_search')}}" method="POST">
+        <input type="hidden" value="{{data_active.pid}}" name="pid" />
+        <input type="hidden" value="{{data_active.pname}}" name="pname" />
+        <button name="submit" value="issuemed_search" type="submit">Issue New Medicine to Patient</a></button>
+        </form>
+        {% endif %}
+{% if data_active and session.get('role')=='diagnostic'  %}
+<form action="{{url_for('issuetest_search')}}" method="POST">
+            <input type="hidden" value="{{data_active.pid}}" name="pid" />
+            <input type="hidden" value="{{data_active.pname}}" name="pname" />
+            <button name="submit" value="issuetest_search" type="submit">Add Diagnostic Tests for Patient</a></button>
+            </form>
+            {% endif %} 
 
     <br>
     <br>
