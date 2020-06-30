@@ -1,97 +1,181 @@
 {% extends 'admin/home.html' %}
 {% block body %}
 <div class="main">
-    <center><h2>Update Patient</h2></center>
-    <div class="row">
-    <form action="/admin/update" method = 'post'>
-       
-        <label>Old SSN ID</label>
-        <input  readonly type="number" value="{{data.ssnid}}" />
-        <span class="text-danger font-weight-bold" id="ssnidspan"></span>
-        <label>New SSN ID</label>
-        <input type="number" name="ssnid" id="ssnid"/>
-        <br /><br />
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="form-bg form-style-patient">
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <h2>Update Patient</h2><br />
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <form action="/admin/update" method='post' class="text-white">
+                            
+                               
+                            <!-- ssnid -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> Old SSN ID</label>
+                                <div class="col-md-6">  
+                                    <input class="form-control" readonly type="number" value="{{data.ssnid}}" />
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> New SSN ID</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" type="number" name="ssnid" id="ssnid" />
+                                </div>
+                            </div>
 
 
-        <label>Patient ID</label>
-        <input name="pid" id="pid" readonly type="number" value="{{data.pid}}" />
-        <br /><br />
+                            <!-- patient id -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> Patient ID</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" name="pid" id="pid" readonly type="number" value="{{data.pid}}" />
+                                </div>
+                            </div>
 
 
-        <label>Patient Old Name</label>
-        <input readonly type="text" value="{{ data.pname }}" />
-        <span class="text-danger font-weight-bold" id="pnamespan"></span>
-        <label>Patient New Name</label>
-        <input name="pname" id="pname"  type="text" />
-        <br /><br />
+                            <!-- patient name -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label">Patient Old Name</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" readonly type="text" value="{{ data.pname }}" />
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> Patient New Name</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" name="pname" id="pname" type="text" />
+                                </div>
+                            </div>
 
 
-        <label>Old Age</label>
-        <input  type="number" readonly value="{{ data.age }}" />
-        <span class="text-danger font-weight-bold" id="agespan"></span>
-        <label>New Age</label>
-        <input type="number"  max="120" min="0" name="age" id="age" />
-        <br /><br />
+                            <!-- patient age -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> Patient Old Age</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" type="number" readonly value="{{ data.age }}" />
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> Patient New Age</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" type="number" max="120" min="0" name="age" id="age" />
+                                </div>
+                            </div>
 
 
 
 
-        <label> Old Date of Admission</label>
-        <input type="date" readonly value="{{data.admitdate}}"/>
-        <span class="text-danger font-weight-bold" id="admitdatespan"></span>
-        <label> New Date of Admission</label>
+                            <!-- admit date -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label">Admit old Date</label>
+                                <div class="col-md-6">
+                                    <input class="form-control"  type="date" readonly value="{{data.admitdate}}" />
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> Admit New Date</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" name="admitdate" id="admitdate" type="date" min="1990-01-01" max="2100-12-31" />
+                                </div>
+                            </div>
+
+                            <!-- bed type -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label">Old Type of Bed</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" type="text" readonly value="{{data.bedtype}}" />
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label">New Type of Bed</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" name="bedtype">
+                                        <option value="">Select bed type</option>
+                                        <option value="general">General Ward</option>
+                                        <option value="semi">Semi Sharing</option>
+                                        <option value="single">Single Room</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- address -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> Patient old Address</label>
+                                <div class="col-md-6">
+                                    <textarea class="form-control" readonly> {{data.address}} </textarea>
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label"> Patient New Address</label>
+                                <div class="col-md-6">
+                                    <textarea class="form-control" cols="5" name="address" rows="1"></textarea>
+                                </div>
+                            </div>
+
+
+
+                            <!-- state -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label">Old state</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" type="text" readonly value="{{data.state}}" /><br>
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label">New State</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="state" name="state">
+                                        <option disabled selected value="">Select state......</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                            <!-- city -->
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label">Old City</label>
+                                <div class="col-md-6">
+                                    <input class="form-control" type="text" readonly value="{{data.city}}" /><br>
+                                </div>
+                            </div>
+                            <div class="form-group row justify-content-center">
+                                <label class="col-md-3 col-form-label">New City</label>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="city" name="city">
+                                        <option disabled selected value="">Select city......</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <input type="submit" class="btn-primary" name="submit" value="confirmupdate">
+                        </form>
+                    </div>
+                </div>
+            </div>
         
-        <input name="admitdate" id="admitdate"  type="date" min="1990-01-01" max="2100-12-31" />
-        <br /><br />
+        <div >
+    </div>
+</div>
 
-
-        <label>Old Type of Bed</label>
-        <input  type="text" value="{{data.bedtype}}" />
-        <label>New Type of Bed</label>
-        <select name="bedtype">
-            <option value="">Select bed type</option>
-            <option value="general">General Ward</option>
-            <option value="semi">Semi Sharing</option>
-            <option value="single">Single Room</option>
-        </select>
-        <br /><br />
-        <label>Old Address </label>
-        <textarea readonly> {{data.address}} </textarea>
-        <label>New Address </label>
-        <textarea cols="5" name="address" rows="1"></textarea>
-        <br /><br />
-
-
-
-        <label for="state">Old State:</label>
-        <input type="text" value="{{data.state}}"/><br>
-        <label for="state">Old City:</label>
-        <input type="text" value="{{data.city}}"/><br>
-        <label> New State : </label>
-        <select id="state" name="state"> 
-         <option disabled selected value="">Select state......</option>
-        </select>
-        <br /><br />
-        <label> New City : </label>
-        <select id="city" name="city">
-            <option disabled selected value="">Select city......</option>
-        </select>
-        <br /><br />
-        <input type="submit" name="submit" value="confirmupdate">
-    </form>
 </div>
 </div>
 <script type="text/javascript">
     function validation() {
-        var validate=true
-        document.getElementById("ssnidspan").innerHTML="";
+        var validate = true
+        document.getElementById("ssnidspan").innerHTML = "";
         document.getElementById("pnamespan").innerHTML = "";
         var ssnid = document.getElementById("ssnid").value
 
 
         if (ssnid.length != 9) {
-            document.getElementById("ssnidspan").innerHTML = "Enter 9 digit SSNID, given input length is :"+ssnid.length;
-            validate=false
+            document.getElementById("ssnidspan").innerHTML = "Enter 9 digit SSNID, given input length is :" + ssnid.length;
+            validate = false
         }
 
         //Patient name
@@ -100,10 +184,10 @@
         // console.log(pname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$"))
         if (!pname.match("^[a-zA-Z]+$")) {
             document.getElementById("pnamespan").innerHTML = "Enter appropriate Patient Name";
-            validate=false
+            validate = false
         }
         return validate
-        
+
     }
 </script>
 

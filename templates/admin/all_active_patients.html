@@ -2,22 +2,24 @@
 {% block body %}
 <div class="main">
 <center><h2>All Active Patients</h2></center>
-<table style="width:100%">
-    <tr>
-        <th>Patient ID</th>
-        <th>SSN ID</th>
-        <th>Patient Name</th>
-        <th>Age</th>
-        <th>Type of Bed</th>
-        <th>Patient Status</th>
-        <th>Address</th>
-        <th>State</th>
-        <th>City</th>
-        <th>Admit Date</th>
+<table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope='col'>Patient ID</th>
+        <th scope='col'>SSN ID</th>
+        <th scope='col'>Patient Name</th>
+        <th scope='col'>Age</th>
+        <th scope='col'>Type of Bed</th>
+        <th scope='col'>Patient Status</th>
+        <th scope='col'>Address</th>
+        <th scope='col'>State</th>
+        <th scope='col'>City</th>
+        <th scope='col'>Admit Date</th>
     </tr>
 
     {% for patient in data %}
-    <tr>
+    <tbody>
+        <tr>
         <td>{{patient.pid}}</td>
         <td>{{patient.ssnid}}</td>
         <td>{{patient.pname}}</td>
@@ -29,7 +31,12 @@
         <td>{{patient.city}}</td>
         <td>{{patient.admitdate}}</td>
     </tr>
+    </tbody>
     {% endfor %}
 </table>
 </div>
 {% endblock %}
+
+
+
+    

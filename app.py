@@ -1,3 +1,4 @@
+
 import json
 from datetime import datetime
 
@@ -6,11 +7,10 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from config import Config
-
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
-from models import User, Patient,MedicineDetails,PatientMedicine
+from models import User, Patient, MedicineDetails, PatientMedicine
 
 migrate = Migrate(app, db)
 
@@ -82,7 +82,7 @@ def register():
 @app.route('/admin')
 @app.route('/admin/home')
 def adminHome():
-    if session.get('role')=='admin':
+    if session.get('role') == 'admin':
         return render_template('admin/home.html')
     else:
         return redirect(url_for('login'))
@@ -114,7 +114,7 @@ def create_patient():
                     db.session.commit()
                     flash(p_message, "success")
                 else:
-                    flash("Patient with SSN ID : " + ssnid + " already exists!", "warning")
+                    flash("Patient with SSN ID : " + ssnid +" already exists!", "warning")
                 return render_template('admin/create_patient.html', data=data)
         elif request.method == 'GET':
             return render_template('admin/create_patient.html', data=data)
@@ -138,10 +138,7 @@ def all_active_patients():
         return redirect(url_for('login'))
 
 
-
-
-
-@app.route('/admin/search_patients',methods=['GET', 'POST'])
+@app.route('/admin/search_patients', methods=['GET', 'POST'])
 def search_patients():
     if session.get('username'):
         if request.method == 'POST':
@@ -154,15 +151,15 @@ def search_patients():
                 patient_all = Patient.query.filter_by(pid=id).first()
                 patient_active=Patient.query.filter_by(pid=id,pstatus='active').first()
             if patient_all != None and session.get('role') == 'admin':
-                flash("Patient Found!")
-                return render_template('admin/search_patients.html', data_all=patient_all)
-            # Since Pharmacist can only issue Medicines to Active Patients
-            elif patient_active != None and session.get('role') == 'pharmacist':
-                flash("Patient Found!")
-                return render_template('admin/search_patients.html', data_active=patient_active)
+                flash("Patient Found!","success")
+                return render_template('search.html', data_all=patient_all)
+          
+            elif patient_active != None and (session.get('role') == 'pharmacist' or session.get('role') == 'diagnostic'):
+                flash("Patient Found!","success")
+                return render_template('search.html', data_active=patient_active)
             else:
                 flash('No patient with ID : ' + id + " found in the records!","danger")
-        return render_template('admin/search_patients.html')
+        return render_template('search.html')
     else:
         flash("Login first as a Desk Executive", "danger")
         return redirect(url_for('login'))
@@ -177,10 +174,10 @@ def update():
             id = request.form['pid']
             patient = Patient.query.filter_by(pid=id).first()
             print('hello')
-            if request.form['submit']=='update_patient':
+            if request.form['submit'] == 'update_patient':
                 return render_template('admin/update_patient.html', data=patient, statecity=dfile)
 
-            if request.form['submit']=='confirmupdate':
+            if request.form['submit'] == 'confirmupdate':
                 print('in patient')
                 ssnid = request.form['ssnid']
                 pname = request.form['pname']
@@ -214,18 +211,19 @@ def update():
                     patient.state = state
                 if city:
                     patient.city = city
-                print('{} {} {} {} {} {} {} {}'.format(ssnid, pname, age, address, bedtype, admitdate, state, city))
+                print('{} {} {} {} {} {} {} {}'.format(ssnid, pname,
+                                                       age, address, bedtype, admitdate, state, city))
                 if ssnid or pname or age or address or admitdate or bedtype or state or city:
                     print('inside commit')
                     result = db.session.commit()
                     print(result)
-                    flash("Patient Updated Successfully")
+                    flash("Patient Updated Successfully", "success")
                     return redirect(url_for('all_active_patients'))
                 else:
                     flash("No Changes were made", "warning")
-                    # return render_template("admin/update_patient.html", statecity=dfile)
-        # else:
-        return render_template("admin/search_patients.html")
+                    
+       
+        return render_template("search.html")
     else:
         flash("Login first as a Desk Executive", "danger")
     return redirect(url_for('login'))
@@ -239,8 +237,9 @@ def delete():
             patient = Patient.query.filter_by(pid=pid).first()
             db.session.delete(patient)
             db.session.commit()
-            flash("Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname))
-# >>>>>>> f51e813781f25d7cc46b1accf52f10619086a354
+            flash(
+                "Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname))
+
         return redirect(url_for('search_patients'))
     else:
         flash("Login first as a Desk Executive", "danger")
@@ -252,8 +251,48 @@ def delete():
 @app.route('/pharmacist')
 @app.route('/pharmacist/home')
 def pharmacistHome():
-    if session.get('role')=='pharmacist':
+    if session.get('role') == 'pharmacist':
         return render_template('pharmacist/home.html')
+    else:
+        return redirect(url_for('login'))
+
+
+
+
+@app.route('/pharmacist/resupply', methods=['GET', 'POST'])
+def resupply_medicines():
+    if session.get('role') == 'pharmacist':
+        if request.method == 'POST':
+            if request.form['submit'] == 'add':
+               
+                medid = request.form['addmedid']
+                medname = request.form['addmedname']
+                medicine = MedicineDetails.query.filter(
+                    or_(MedicineDetails.medid == medid, MedicineDetails.medname.like(medname))).all()
+                
+                quantity = request.form['addquantity']
+                rate = request.form['addrate']
+                
+                if not medicine:
+                    medicine = MedicineDetails(
+                        medid=medid, medname=medname, quantity=quantity, rate=rate)
+                    db.session.add(medicine)
+                    db.session.commit()
+                    flash("New Medicine added succefully!", "success")
+                else:
+                    flash("Medicine with Id : {} or Name: {} ,already exist, use update quantity to resupply!".format(
+                        medid, medname), "warning")
+            elif request.form['submit'] == 'update':
+                medid = request.form['updatemedid']
+                quantity = int(request.form['updatequantity'])
+                print("in update med")
+                medicine = MedicineDetails.query.filter_by(medid=medid).first()
+                medicine.quantity += quantity
+                db.session.commit()
+                flash("Medicine Id : {},Quantity updated to : {}".format(
+                    medid, medicine.quantity), "success")
+        medicine = MedicineDetails.query.filter().all()
+        return render_template('pharmacist/resupply.html', med_data=medicine)
     else:
         return redirect(url_for('login'))
 
@@ -264,81 +303,50 @@ def pharma_search_patients():
     else:
         return redirect(url_for('login'))
 
-
-@app.route('/pharmacist/resupply',methods=['GET','POST'])
-def resupply_medicines():
-    if session.get('role')=='pharmacist':
-        if request.method=='POST':
-            if request.form['submit']=='add':
-                # print('here add')
-                medid=request.form['addmedid']
-                medname=request.form['addmedname']
-                medicine=MedicineDetails.query.filter(or_(MedicineDetails.medid==medid,MedicineDetails.medname.like(medname))).all()
-                # print("Med : ",medicine)
-                quantity=request.form['addquantity']
-                rate=request.form['addrate']
-                # Avoiding duplicate entries
-                if not medicine:
-                    medicine=MedicineDetails(medid=medid,medname=medname,quantity=quantity,rate=rate)
-                    db.session.add(medicine)
-                    db.session.commit()
-                    flash("New Medicine added succefully!","success")
-                else:
-                    flash("Medicine with Id : {} or Name: {} ,already exist, use update quantity to resupply!".format(medid,medname),"warning")
-            elif request.form['submit']=='update':
-                medid=request.form['updatemedid']
-                quantity=int(request.form['updatequantity'])
-                print("in update med")
-                medicine=MedicineDetails.query.filter_by(medid=medid).first()
-                medicine.quantity+=quantity
-                db.session.commit()
-                flash("Medicine Id : {},Quantity updated to : {}".format(medid,medicine.quantity),"success")
-        medicine=MedicineDetails.query.filter().all()
-        return render_template('pharmacist/resupply.html',med_data=medicine)
-    else:
-        return redirect(url_for('login'))
-
-
-@app.route('/pharmacist/issuemedicine',methods=['GET','POST'])
+@app.route('/pharmacist/issuemedicine', methods=['GET', 'POST'])
 def issuemed_search():
-    if session.get('role')=='pharmacist':
-        print("Request methof",request.method)
-        if request.method=='POST':
-            pid=request.form['pid']
-            pname=request.form['pname']
-            pdata={"pid":pid,"pname":pname}
-            if request.form['submit']=='issuemed_add':
-                medname=request.form['medname']
-                quantity=int(request.form['quantity'])
-                medfind=MedicineDetails.query.filter_by(medname=medname).first()
-                print("MedFind : ",medfind)
-                if(medfind is not None and quantity<=medfind.quantity):
-                    patientmedfind=PatientMedicine.query.filter_by(medname=medname).first()
+    if session.get('role') == 'pharmacist':
+        print("Request methof", request.method)
+        if request.method == 'POST':
+            pid = request.form['pid']
+            pname = request.form['pname']
+            pdata = {"pid": pid, "pname": pname}
+            if request.form['submit'] == 'issuemed_add':
+                medname = request.form['medname']
+                quantity = int(request.form['quantity'])
+                medfind = MedicineDetails.query.filter_by(
+                    medname=medname).first()
+                print("MedFind : ", medfind)
+                if(medfind is not None and quantity <= medfind.quantity):
+                    patientmedfind = PatientMedicine.query.filter_by(
+                        medname=medname).first()
                     if(patientmedfind is None):
-                        patientmedicine=PatientMedicine(pid=pdata["pid"],medid=medfind.medid,medname=medfind.medname,quantity=quantity,rate=medfind.rate)
+                        patientmedicine = PatientMedicine(
+                            pid=pdata["pid"], medid=medfind.medid, medname=medfind.medname, quantity=quantity, rate=medfind.rate)
                         db.session.add(patientmedicine)
                     else:
-                        patientmedfind.quantity+=quantity
+                        patientmedfind.quantity += quantity
                     db.session.commit()
-                    medfind.quantity-=quantity
+                    medfind.quantity -= quantity
                     db.session.commit()
-                    flash("Medicine issued Succefully!","success")
+                    flash("Medicine issued Succefully!", "success")
                 else:
-                    flash("Either Medicine name or invalid Quantity is entered. Refer medecine available table!","danger")
-            medicine=MedicineDetails.query.filter().all()
-            med_issued=PatientMedicine.query.filter_by(pid=pdata["pid"]).all()
-            return render_template('pharmacist/issuemedicine.html',data_medissue=med_issued,data_allmed=medicine,pdata=pdata)
+                    flash(
+                        "Either Medicine name or invalid Quantity is entered. Refer medecine available table!", "danger")
+            medicine = MedicineDetails.query.filter().all()
+            med_issued = PatientMedicine.query.filter_by(
+                pid=pdata["pid"]).all()
+            return render_template('pharmacist/issuemedicine.html', data_medissue=med_issued, data_allmed=medicine, pdata=pdata)
         return redirect(url_for('pharma_search_patients'))
     else:
         return redirect(url_for('login'))
-
 
 
 # ========Diagnostic============
 @app.route('/diagnostic')
 @app.route('/diagnostic/home')
 def diagnosticHome():
-    if request.method == 'GET' and session.get('role')=='diagnostic':
+    if request.method == 'GET' and session.get('role') == 'diagnostic':
         return render_template('diagnostic/home.html')
     else:
         return redirect(url_for('login'))
