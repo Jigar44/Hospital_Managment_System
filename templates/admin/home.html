@@ -28,18 +28,21 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="active" href="{{url_for('create_patient')}}">Create Patient</a></li>
                 <li class="nav-item active"><a href="{{url_for('all_active_patients')}}">All Active Patients</a></li>
-                <li class="nav-item"><a href="{{url_for('search_patients')}}">Search Active Patients</a></li>
+                <li class="nav-item"><a href="{{url_for('search_patients')}}">Search Patients</a></li>
                 <li class="nav-item"><a href="{{url_for('logout')}}">Logout</a></li>
             </ul>
         </div>
     </div>
 </nav>
-<div class="col-6 main">
-    {% include 'flashmess.html' %}
+<div class="row justify-content-center main">
+    <div class="col-md-6">
+        {% include 'flashmess.html' %}
+    </div>
+    
 </div>
 {% block body %}
 {% endblock %}
-{% include 'admin/footer.html' %}
+{% include 'footer.html' %}
 </body>
 
 </html>

@@ -23,9 +23,9 @@ class User(db.Model):
 
 
 
-event.listen(User.__table__,"after_create",
-DDL(" ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;")
-)
+# event.listen(User.__table__,"after_create",
+# DDL(" ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;")
+# )
 
 #one
 class Patient(db.Model):
@@ -46,12 +46,12 @@ class Patient(db.Model):
     created_on = db.Column(db.TIMESTAMP, default=datetime.now())
     updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
-event.listen(Patient.__table__,
-    "after_create",
-    DDL("""
-    ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;
-    """)
-)
+# event.listen(Patient.__table__,
+#     "after_create",
+#     DDL("""
+#     ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;
+#     """)
+# )
 
 class MedicineDetails(db.Model):
     __tablename__ = 'medicine_details'
