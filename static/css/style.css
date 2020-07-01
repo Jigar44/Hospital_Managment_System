@@ -51,8 +51,12 @@ h6 {
 .main{
     margin-top: 65px;
     text-align: center;
-    vertical-align: middle;
+    
 }
+
+
+
+
 /*Form Styling*/
 .form-bg{
     background-color: white;
@@ -119,7 +123,8 @@ h6 {
 /*patient form*/
 .form-style-patient{
     background-color: #578BC4;
-    margin-top: 90px;
+    margin-left: 50px;
+    margin-top: 40px;
     margin-bottom: 70px;
     padding: 30px;
 }
@@ -129,7 +134,7 @@ h6 {
     color: white;
     padding: 20px;
     background-color: #578BC4;
-    margin-top: 50px;
+    margin-top: 80px;
 }
 
 .footer h5{
@@ -144,4 +149,11 @@ h6 {
 .footer a:hover{
     color: black;
     text-decoration: none;
+}
+/* Table */
+.table{
+   align-items: center;
+    width: 60%;
+    margin-left: 40vh;
+    margin-top: 50px;
 }

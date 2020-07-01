@@ -5,6 +5,7 @@ migrations
 Readme.md
 config.py
 .flaskenv
+.vscode
 
 
 # Byte-compiled / optimized / DLL files
