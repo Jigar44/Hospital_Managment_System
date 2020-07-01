@@ -5,7 +5,8 @@ from datetime import datetime
 from flask import Flask, render_template, request, session, flash, redirect, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_
+from sqlalchemy import or_,func
+from sqlalchemy.sql import label
 from config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -14,6 +15,19 @@ from models import User, Patient,MedicineDetails,PatientMedicine,TestDetails,Pat
 
 migrate = Migrate(app, db)
 
+
+def calcBills(patientObj):
+    # calculate admitdate and dischargedate(currentdate) difference
+    bedtotal=0
+    days=(datetime.now().date()-patientObj.admitdate).days
+    if patientObj.bedtype.lower()=="general":
+        bedtotal=days*2000
+    elif patientObj.bedtype.lower()=="semi sharing":
+        bedtotal=days*4000
+    elif patientObj.bedtype.lower()=="single":
+        bedtotal=days*8000
+    return {"bedtotal":bedtotal,"days":days}
+    
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -115,9 +129,9 @@ def create_patient():
                     flash(p_message, "success")
                 else:
                     flash("Patient with SSN ID : " + ssnid +" already exists!", "warning")
-                return render_template('admin/create_patient.html', data=data)
+                return render_template('admin/create_patient.html', data=data,today=datetime.now().date())
         elif request.method == 'GET':
-            return render_template('admin/create_patient.html', data=data)
+            return render_template('admin/create_patient.html', data=data,today=datetime.now().date())
     else:
         flash("Login first as a Desk Executive", "danger")
         return redirect(url_for('login'))
@@ -150,6 +164,7 @@ def search_patients():
                 id = request.form['pid']
                 patient_all = Patient.query.filter_by(pid=id).first()
                 patient_active=Patient.query.filter_by(pid=id,pstatus='active').first()
+            # Here patient_all means irrescpective of its status(1 result)
             if patient_all != None and session.get('role') == 'admin':
                 flash("Patient Found!","success")
                 return render_template('search.html', data_all=patient_all)
@@ -165,6 +180,44 @@ def search_patients():
         return redirect(url_for('login'))
 
 
+@app.route('/admin/billings',methods=['GET', 'POST'])
+def patient_billings():
+    if session.get('username') and session.get('role') == 'admin':
+        if request.method == 'POST':
+            id = request.form['pid']
+            patient = Patient.query.filter_by(pid=id).first()
+            beddata=calcBills(patient)
+            medissued=PatientMedicine.query.filter_by(pid=id).all()
+            testissued=PatientTest.query.filter_by(pid=id).all()
+            medtotal=testtotal=0
+            if medissued:
+                medsum=db.session.query(PatientMedicine,label('medtotal', func.sum(PatientMedicine.amount))).filter_by(pid=id).first()
+                medtotal=medsum.medtotal
+            if testissued:
+                testsum=db.session.query(PatientTest,label('testtotal', func.sum(PatientTest.charge))).filter_by(pid=id).first()
+                testtotal=testsum.testtotal
+
+            testissued=PatientTest.query.filter_by(pid=id).all()
+            # billdata=calcBills(patient,medissued,testissued)
+            grandtotal=beddata['bedtotal']+medtotal+testtotal
+            total=[beddata,medtotal,testtotal,grandtotal]
+            if request.form['submit']=='confirm_bills':
+                patient.pstatus='discharged'
+                db.session.commit()
+                flash("Patient discharged succesfully!","success")
+                return redirect(url_for("search_patients"))
+            return render_template("admin/bills.html",patient_data=patient,medicine_data=medissued,
+            test_data=testissued,bill_total=total,today=datetime.now().date())
+        return redirect(url_for("search_patients"))
+    else:
+        flash("Login first as a Desk Executive", "danger")
+    return redirect(url_for('login'))
+        
+            
+
+
+
+
 @app.route('/admin/update', methods=['GET', 'POST'])
 def update():
     if session.get('username') and session.get('role') == 'admin':
@@ -175,7 +228,7 @@ def update():
             patient = Patient.query.filter_by(pid=id).first()
             
             if request.form['submit']=='update_patient':
-                return render_template('admin/update_patient.html', data=patient, statecity=dfile)
+                return render_template('admin/update_patient.html', data=patient, statecity=dfile,today=datetime.now().date())
 
             if request.form['submit']=='confirmupdate':
                 pname = request.form['pname']
@@ -299,8 +352,7 @@ def issuemed_search():
         
         if request.method=='POST':
             pid=request.form['pid']
-            pname=request.form['pname']
-            pdata={"pid":pid,"pname":pname}
+            patient=Patient.query.filter_by(pid=pid).first()
             if request.form['submit']=='issuemed_add':
                 medname=request.form['medname']
                 quantity=int(request.form['quantity'])
@@ -308,11 +360,11 @@ def issuemed_search():
                     medname=medname).first()
                 
                 if(medfind is not None and quantity<=medfind.quantity):
-                    patientmedfind=PatientMedicine.query.filter_by(
+                    patientmedfind=PatientMedicine.query.filter_by(pid=pid,
                         medname=medname).first()
                     if(patientmedfind is None):
                         patientmedicine = PatientMedicine(
-                            pid=pdata["pid"], medid=medfind.medid, medname=medfind.medname, quantity=quantity, rate=medfind.rate)
+                            pid=pid, medid=medfind.medid, medname=medfind.medname, quantity=quantity, rate=medfind.rate)
                         db.session.add(patientmedicine)
                     else:
                         patientmedfind.quantity += quantity
@@ -325,8 +377,8 @@ def issuemed_search():
                         "Either Medicine name or invalid Quantity is entered. Refer medecine available table!", "danger")
             medicine = MedicineDetails.query.filter().all()
             med_issued = PatientMedicine.query.filter_by(
-                pid=pdata["pid"]).all()
-            return render_template('pharmacist/issuemedicine.html', data_medissue=med_issued, data_allmed=medicine, pdata=pdata)
+                pid=pid).all()
+            return render_template('pharmacist/issuemedicine.html', data_medissue=med_issued, data_allmed=medicine, patient_data=patient)
         return redirect(url_for('pharma_search_patients'))
     else:
         return redirect(url_for('login'))
@@ -351,18 +403,16 @@ def diagnostic_search_patients():
 @app.route('/diagnostic/issuetest',methods=['GET','POST'])
 def issuetest_search():
     if session.get('role')=='diagnostic':
-        
         if request.method=='POST':
             pid=request.form['pid']
-            pname=request.form['pname']
-            pdata={"pid":pid,"pname":pname}
+            patient=Patient.query.filter_by(pid=pid).first()
             if request.form['submit']=='issuetest_add':
                 testname=request.form['testname']
                 charge=request.form['charge']
                 testfind=TestDetails.query.filter_by(testname=testname).first()
                 
                 if(testfind is not None):
-                        patientTest=PatientTest(pid=pdata["pid"],testid=testfind.testid,testname=testname,charge=charge)
+                        patientTest=PatientTest(pid=pid,testid=testfind.testid,testname=testname,charge=charge)
                         db.session.add(patientTest)
                         db.session.commit()
                         flash("test issued Succefully!","success")
@@ -372,8 +422,8 @@ def issuetest_search():
             testDict={}
             for row in test:
                 testDict[row.testname]=float(row.charge)
-            test_issued=PatientTest.query.filter_by(pid=pdata["pid"]).all()
-            return render_template('diagnostic/issuetest.html',data_testissue=test_issued,data_alltest=testDict,pdata=pdata)
+            test_issued=PatientTest.query.filter_by(pid=pid).all()
+            return render_template('diagnostic/issuetest.html',data_testissue=test_issued,data_alltest=testDict,patient_data=patient)
         return redirect(url_for('pharma_search_patients'))
     else:
         return redirect(url_for('login'))
