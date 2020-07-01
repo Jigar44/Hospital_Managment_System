@@ -1,148 +1,160 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'pharmacist/home.html' %}
+{% block body %}
+    <body>
+    <!-- Displays All Medecines Currently issued to Specific Patient if any -->
+    {% if data_medissue %}
+        <p>Medicine Issued to patient ID: {{ pdata['pid'] }} | Name : {{ pdata['pname'] }}</p>
+        <br/>
+        <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+            <div class="col-md-10">
+                <table class="ui celled table" style="width:100%;" id="issuemedicine">
+                    <thead class="thead-dark">
+                        <th>Medicine ID</th>
+                        <th>Medicine Name</th>
+                        <th>Current Quantity</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data in data_medissue %}
+                        <tr>
+                            <th>{{ data.medid }}</th>
+                            <th>{{ data.medname }}</th>
+                            <th>{{ data.quantity }}</th>
+                            <th>{{ data.rate }}</th>
+                            <th>{{ data.amount }}</th>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Pharmacist: Issue Medicine</title>
-  <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-</head>
-{% include 'flashmess.html' %}
+    {% else %}
+        <center><h4>No Issued medicines records found!</h4></center>
+    {% endif %}
 
-<body>
+    <!-- end show issued medicine -->
 
-  <!-- Displays All Medecines Currently issued to Specific Patient if any -->
-  {% if data_medissue %}
-  <p>Medicine Issued to patient ID: {{pdata['pid']}} | Name : {{pdata['pname']}}</p>
-  <br/>
-  <table style="width: 100%;">
-    <tr>
-      <th>Medicine ID</th>
-      <th>Medicine Name</th>
-      <th>Current Quantity</th>
-      <th>Rate</th>
-      <th>Amount</th>
-      
-    </tr>
-    {% for data in data_medissue %}
-    <tr>
-      <th>{{data.medid}}</th>
-      <th>{{data.medname}}</th>
-      <th>{{data.quantity}}</th>
-      <th>{{data.rate}}</th>
-      <th>{{data.amount}}</th>
-    </tr>
-    {% endfor %}
-  </table>
-
-{% else %}
-<center><h4>No Issued medicines records found!</h4></center>
-  {% endif %} 
-  
-  <!-- end show issued medicine -->
-  
-  <!-- show available medicines in the inventory from which pharmacist can issue meds
-     to patient if inventory not empty -->
-     <br>
-     <button id="bissuemedadd">Issue new Medicine</button>
-     <br>
-  {% if data_allmed %}
-  
-  
-  <form action="/pharmacist/issuemedicine" method="post" onsubmit="return addvalidation()" id="issuenewmedform"
-  style="display: none;">
-
-  <input type="hidden" name="pid" value="{{pdata['pid']}}"/>
-  <input type="hidden" name="pname" value="{{pdata['pname']}}"/>
-  <label>Enter Medicine Name</label>
-  <input name="medname" id="medname" required type="text" />
-  <span class="text-danger font-weight-bold" id="mednamespan"></span>
-  <br /><br />
-  <label>Quantity</label>
-  <input min="0" name="quantity" id="quantity" required type="number" />
-  <span class="text-danger font-weight-bold" id="quantityspan"></span>
-  <br /><br />
+    <!-- show available medicines in the inventory from which pharmacist can issue meds
+       to patient if inventory not empty -->
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-md-2">
+            <button class="btn btn-primary" id="bissuemedadd">Issue new Medicine</button>
+        </div>
+    </div>
+    {% if data_allmed %}
 
 
-  <button name="submit" type="submit" value="issuemed_add">Confirm Add!</button>
-  <button type="reset" value="Reset">Reset</button>
-</form>
+        <form action="/pharmacist/issuemedicine" method="post" onsubmit="return addvalidation()" id="issuenewmedform"
+              style="display: none;">
 
-  <table style="width: 100%;" border="1">
-    <tr>
-      <th colspan="5">Medicine Available :</th>
-    </tr>
-    <tr>
-      <th>Medicine ID</th>
-      <th>Medicine Name</th>
-      <th>Current Quantity</th>
-      <th>Rate</th>
-    </tr>
-    {% for data in data_allmed %}
-    <tr>
-      <th>{{data.medid}}</th>
-      <th>{{data.medname}}</th>
-      <th>{{data.quantity}}</th>
-      <th>{{data.rate}}</th>
-    </tr>
-    {% endfor %}
-  </table>
+            <input type="hidden" name="pid" value="{{ pdata['pid'] }}"/>
+            <input type="hidden" name="pname" value="{{ pdata['pname'] }}"/>
+            <label>Enter Medicine Name</label>
+            <input name="medname" id="medname" required type="text"/>
+            <span class="text-danger font-weight-bold" id="mednamespan"></span>
+            <br/><br/>
+            <label>Quantity</label>
+            <input min="0" name="quantity" id="quantity" required type="number"/>
+            <span class="text-danger font-weight-bold" id="quantityspan"></span>
+            <br/><br/>
 
-  <br />
+            <button name="submit" type="submit" value="issuemed_add">Confirm Add!</button>
+            <button type="reset" value="Reset">Reset</button>
+        </form>
 
-  <button name="resupply">
-    <a href="{{url_for('resupply_medicines')}}">Add/Resupply Medicines</a>
-  </button>
+        <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+            <div class="col-md-10">
+                <table class="ui celled table" style="width:100%;" id="allmedicine">
+                    <thead>
+                    <tr>
+                        <th class="text-center" colspan="5">Available Medicine</th>
+                    </tr>
+                    <tr>
+                        <th>Medicine ID</th>
+                        <th>Medicine Name</th>
+                        <th>Current Quantity</th>
+                        <th>Rate</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data in data_allmed %}
+                        <tr>
+                            <th>{{ data.medid }}</th>
+                            <th>{{ data.medname }}</th>
+                            <th>{{ data.quantity }}</th>
+                            <th>{{ data.rate }}</th>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br/>
 
-  {% else %}
+        <button name="resupply">
+            <a href="{{ url_for('resupply_medicines') }}">Add/Resupply Medicines</a>
+        </button>
 
-  <p>No Medicine Available in the Inventory! Add new Medicine</p>
+    {% else %}
 
-  <button name="resupply">
-    <a href="{{url_for('resupply_medicines')}}">Add/Resupply Medicines</a>
-  </button>
+        <p>No Medicine Available in the Inventory! Add new Medicine</p>
 
-  {% endif %}
+        <button name="resupply">
+            <a href="{{ url_for('resupply_medicines') }}">Add/Resupply Medicines</a>
+        </button>
+
+    {% endif %}
 
 
-  <button name="logout"><a href="{{url_for('logout')}}">Logout</a></button>
-  <input type="button" value="Back" onclick="history.back()" />
-</body>
+    <button name="logout"><a href="{{ url_for('logout') }}">Logout</a></button>
+    <input type="button" value="Back" onclick="history.back()"/>
+    </body>
 
-<!-- ============================= JS validataion=================== -->
-<script type="text/javascript">
-  
+    <!-- ============================= JS validataion=================== -->
+    <script type="text/javascript">
 
-  function addvalidation() {
-    var validate = true;
-    document.getElementById("mednamespan").innerHTML = "";
-    
-    //Patient name
-    var medname = document.getElementById("medname").value;
-    // console.log("medname : "+ medname)
-    // console.log(medname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$"))
-    if (!medname.match("^[a-zA-Z]+$")) {
-      document.getElementById("mednamespan").innerHTML =
-        "Enter Alphabetical Medicine Name";
-      validate = false;
-    }
-    return validate;
-  }
-</script>
 
-<script>
-  $(document).ready(function () {
-    window.history.replaceState("", "", window.location.href);
-  });
-</script>
+        function addvalidation() {
+            var validate = true;
+            document.getElementById("mednamespan").innerHTML = "";
 
-<script>
-  $(document).ready(function () {
-    $("#bissuemedadd").click(function () {
-      $("#issuenewmedform").show();
-      
-    });
-  });
-</script>
+            //Patient name
+            var medname = document.getElementById("medname").value;
+            // console.log("medname : "+ medname)
+            // console.log(medname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$"))
+            if (!medname.match("^[a-zA-Z]+$")) {
+                document.getElementById("mednamespan").innerHTML =
+                    "Enter Alphabetical Medicine Name";
+                validate = false;
+            }
+            return validate;
+        }
+    </script>
 
-</html>
+{#    <script>#}
+{#        $(document).ready(function () {#}
+{#            window.history.replaceState("", "", window.location.href);#}
+{#        });#}
+{#    </script>#}
+
+    <script>
+        $(document).ready(function () {
+            $("#bissuemedadd").click(function () {
+                $("#issuenewmedform").show();
+
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#allmedicine').DataTable();
+            $('#issuemedicine').DataTable();
+        });
+
+    </script>
+
+{% endblock %}
