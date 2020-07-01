@@ -3,6 +3,7 @@
 {% elif session.get('role') == 'pharmacist'   %}
 {% extends 'pharmacist/home.html' %}
 {% elif session.get('role') == 'diagnostic'   %}
+<p>Hello</p>
 {% extends 'diagnostic/home.html' %}
 {% endif %}
 
@@ -56,63 +57,63 @@
 </div>
 <!-- admin search -->
 {% if data_all and session.get('role')=='admin' %}
-        <table class="table">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Patient ID</th>
-                    <th>SSN ID</th>
-                    <th>Patient Name</th>
-                    <th>Age</th>
-                    <th>Type of Bed</th>
-                    <th>Patient Status</th>
-                    <th>Address</th>
-                    <th>State</th>
-                    <th>City</th>
-                    <th>Admit Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{data_all.pid}}</td>
-                    <td>{{data_all.ssnid}}</td>
-                    <td>{{data_all.pname}}</td>
-                    <td>{{data_all.age}}</td>
-                    <td>{{data_all.bedtype}}</td>
-                    <td>{{data_all.pstatus}}</td>
-                    <td>{{data_all.address}}</td>
-                    <td>{{data_all.state}}</td>
-                    <td>{{data_all.city}}</td>
-                    <td>{{data_all.admitdate}}</td>
-                </tr>
-            </tbody>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>Patient ID</th>
+            <th>SSN ID</th>
+            <th>Patient Name</th>
+            <th>Age</th>
+            <th>Type of Bed</th>
+            <th>Patient Status</th>
+            <th>Address</th>
+            <th>State</th>
+            <th>City</th>
+            <th>Admit Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{data_all.pid}}</td>
+            <td>{{data_all.ssnid}}</td>
+            <td>{{data_all.pname}}</td>
+            <td>{{data_all.age}}</td>
+            <td>{{data_all.bedtype}}</td>
+            <td>{{data_all.pstatus}}</td>
+            <td><div style="overflow-x: hidden;overflow-y:scroll;height: 75px;">{{data_all.address}}</div></td>
+            <td>{{data_all.state}}</td>
+            <td>{{data_all.city}}</td>
+            <td>{{data_all.admitdate}}</td>
+        </tr>
+    </tbody>
 
-        </table>
+</table>
 
-        <form action="/admin/update" method="POST">
-            <input type="hidden" value="{{data_all.pid}}" name="pid" />
-            <div class="col-md-12">
-                <button name="submit" class=" btn btn-primary" value="update_patient" type="submit">Update
-                    Patient</a></button>
-                </button>
-            </div>
-        </form>
-        <br>
-        <br>
+<form action="/admin/update" method="POST">
+    <input type="hidden" value="{{data_all.pid}}" name="pid" />
+    <div class="col-md-12">
+        <button name="submit" class=" btn btn-primary" value="update_patient" type="submit">Update
+            Patient</a></button>
+        </button>
+    </div>
+</form>
+<br>
+<br>
 
-        <form action="/admin/delete" method="POST" onsubmit="return confirm('Confirm Patient Delete?!')">
-            <input type="hidden" value="{{data_all.pid}}" name="pid" />
-            <div class="col-md-12">
-                <button name="submit" class=" btn btn-primary" value="delete_patient" type="submit">Delete
-                    Patient</a></button>
-                </button>
-            </div>
-        </form>
+<form action="/admin/delete" method="POST" onsubmit="return confirm('Confirm Patient Delete?!')">
+    <input type="hidden" value="{{data_all.pid}}" name="pid" />
+    <div class="col-md-12">
+        <button name="submit" class=" btn btn-primary" value="delete_patient" type="submit">Delete
+            Patient</a></button>
+        </button>
+    </div>
+</form>
 
 {% endif %}
 
 
 <!-- pharmacist search -->
-{% if data_active and session.get('role')=='pharmacist' %}
+{% if data_active and (session.get('role')=='pharmacist' or session.get('role')=='diagnostic') %}
 <table class="table">
     <thead class="thead-dark">
         <tr>
@@ -136,7 +137,7 @@
             <td>{{data_active.age}}</td>
             <td>{{data_active.bedtype}}</td>
             <td>{{data_active.pstatus}}</td>
-            <td>{{data_active.address}}</td>
+            <td ><div style="overflow-x: hidden;overflow-y:scroll;height: 75px;">{{data_active.address}}</div></td>
             <td>{{data_active.state}}</td>
             <td>{{data_active.city}}</td>
             <td>{{data_active.admitdate}}</td>
@@ -144,14 +145,24 @@
     </tbody>
 </table>
 
+{% endif %}
+{% if data_active and session.get('role')=='pharmacist'  %}
 <form action="{{url_for('issuemed_search')}}" method="POST">
     <input type="hidden" value="{{data_active.pid}}" name="pid" />
     <input type="hidden" value="{{data_active.pname}}" name="pname" />
-    <button name="submit" class="col-md-3 btn btn-primary" value="issuemed_search" type="submit">Issue New Medicine to
-        Patient</a></button>
+    <button name="submit" value="issuemed_search" type="submit">Issue New Medicine to Patient</a></button>
 </form>
-
 {% endif %}
+{% if data_active and session.get('role')=='diagnostic'  %}
+<form action="{{url_for('issuetest_search')}}" method="POST">
+    <input type="hidden" value="{{data_active.pid}}" name="pid" />
+    <input type="hidden" value="{{data_active.pname}}" name="pname" />
+    <button name="submit" value="issuetest_search" type="submit">Add Diagnostic Tests for Patient</a></button>
+</form>
+{% endif %}
+
+
+
 <script>
     $(document).ready(function () {
         $('#ssnid').blur(function () {

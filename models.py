@@ -2,6 +2,8 @@ from datetime import datetime
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import event,DDL
+from sqlalchemy.sql import select
+import json
 
 class User(db.Model):
     __tablename__ = 'userstore'
@@ -39,6 +41,7 @@ class Patient(db.Model):
     bedtype = db.Column(db.String(15), nullable=False)
     pstatus = db.Column(db.String(10), nullable=False, default='active')
     patientmedicine=db.relationship('PatientMedicine', backref='patients', lazy='dynamic',cascade='all, delete-orphan')
+    patienttest=db.relationship('PatientTest', backref='patients', lazy='dynamic',cascade='all, delete-orphan')
     admitdate = db.Column(db.Date, default=datetime.now())
     created_on = db.Column(db.TIMESTAMP, default=datetime.now())
     updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
@@ -76,14 +79,52 @@ class PatientMedicine(db.Model):
     updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
 
+event.listen(
+    PatientMedicine.__table__,
+    "after_create",
+    DDL("""
+    ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;
+    """)
+)
 
-# event.listen(
-#     PatientMedicine.__table__,
-#     "after_create",
-#     DDL("""
-#     ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;
-#     """)
-# )
+
+
+# PatientTest have one to one relationship woth TestDetails
+#Diagnostic Test Master Table
+class TestDetails(db.Model):
+    __tablename__ = 'test_details'
+
+    testid = db.Column(db.Integer, primary_key=True)
+    testname = db.Column(db.String(100), nullable=False,unique=True)
+    charge = db.Column(db.Numeric(10,4), nullable=False)
+    patienttest=db.relationship('PatientTest', backref='test_details', uselist=False)
+    created_on = db.Column(db.TIMESTAMP, default=datetime.now())
+    updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
+
+def seedData(*args, **kwargs):
+    with open('static/MedicalTest.json') as datafile:
+            data = json.load(datafile)
+    for key,val in data.items():
+        db.session.add(TestDetails(testname=key,charge=val))
+        db.session.commit()
+
+event.listen(TestDetails.__table__,"after_create",seedData)
+
+        
+
+# 1 patient can have many Tests (one to many)
+class PatientTest(db.Model):
+    __tablename__ = 'patient_tests'
+
+    id = db.Column(db.Integer, primary_key=True)
+    pid=db.Column(db.Integer, db.ForeignKey('patients.pid',ondelete='CASCADE'))
+    testid = db.Column(db.Integer,db.ForeignKey('test_details.testid'))
+    testname=db.Column(db.String(100))
+    charge=db.Column(db.Numeric(10,4))
+    created_on = db.Column(db.TIMESTAMP, default=datetime.now())
+    updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
+
+
 
 db.create_all()
 db.session.commit()
