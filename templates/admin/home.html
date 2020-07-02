@@ -1,56 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Required meta tags always come first -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <title>Admin</title>
-    <!--CSS Styling-->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link href="{{url_for('static', filename='css/style.css')}}" type="text/css" rel="stylesheet">
-    <!-- CSS link for Searching -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.semanticui.min.css" rel="stylesheet">
-
-    <!--Scripts-->
-    <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-
-    <!-- JQuery link for Searching -->
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.semanticui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
-</head>
-<body>
-<nav class="navbar navbar-dark navbar-expand-sm fixed-top">
-    <div class="container">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse offset-sm-3" id="Navbar">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="active" href="{{url_for('create_patient')}}">Create Patient</a></li>
-                <li class="nav-item active"><a href="{{url_for('all_active_patients')}}">All Active Patients</a></li>
-                <li class="nav-item"><a href="{{url_for('search_patients')}}">Search Patients/Billing</a></li>
-                <li class="nav-item"><a href="{{url_for('logout')}}">Logout</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<div class="row justify-content-center main">
-    <div class="col-md-6">
-        {% include 'flashmess.html' %}
-    </div>
-    
-</div>
+{% extends 'layout.html' %}
+{% block title %}Admin{% endblock %}
 {% block body %}
-{% endblock %}
-{% include 'footer.html' %}
-</body>
 
-</html>
+
+<p style="margin-top: 100px; background-color: white;"><strong>Safety</strong><br>
+    Infection prevention
+    Expand the concurrent antibiotic stewardship program system wide
+    Continue and expand Central Line Acquired Bloodstream reduction initiatives in UH Seidman Cancer Center
+    Reduction of preventable complications/harm
+    Reduce hospital-wide all cause readmission rates system-wide by 5 percent
+    Reduce Sickle Cell readmission rate by 15 percent
+    Meet or exceed core measure MIP goal
+    Redesign procedure transport process to improve patient safety
+    Medication Safety
+    Implement four new system medication policies
+    Activate four medication therapeutic substitutions system wide
+    Add standardized EMR pharmacist documentation
+    Perform bedside bar-coding FMEA
+    Achieve 90 percent Alaris drug library use
+    Comprehensive chemotherapy safety</p>
+
+
+    <p style="margin-top: 100px; background-color: white;"><strong>Medical care</strong><br>
+        1.
+To provide high quality specialized medical care and promote collaboration with local healthcare institutions as a core medical institution of Yamaguchi Prefecture.
+2.
+To practice collaborative multidisciplinary health care involving a range of health professionals.
+3.
+To practice and promote highly-advanced medical treatments.
+4.
+To strengthen infection countermeasures.</p>
+
+
+{% endblock %}

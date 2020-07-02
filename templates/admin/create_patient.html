@@ -1,93 +1,79 @@
-{% extends 'admin/home.html' %}
+{% extends 'layout.html' %}
+{% block title %}Admin{% endblock %}
 {% block body %}
 <div class="main">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="form-bg form-style-patient">
                 <div class="row justify-content-center">
                     <div class="col-md-12">
-                        <h2>Create Patient</h2><br/>
+                        <h2>Create Patient</h2><br />
                     </div>
                 </div>
-                <div class="row justify-content-center">
+                <div class="row">
                     <div class="col-md-12">
-                        <form action="/admin/create_patient" method="post" onsubmit="return validation()" class="text-white">
+
+                        <form action="/admin/create_patient" method="post" onsubmit="return patientvalidation()">
 
 
                             <div class="form-group row justify-content-center">
-                                <label class="col-md-2 col-form-label">SSN ID</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" name="ssnid" id="ssnid" required type="number"/>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="text-danger font-weight-bold" id="ssnidspan"></p>
-                                    </div>
+                                <label class="col-md-3 col-form-label">SSN ID</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" name="ssnid" id="ssnid" required type="number" />
+                                    <p class="text-danger font-weight-bold" id="ssnidspan"></p>
                                 </div>
                             </div>
 
 
                             <div class="form-group row justify-content-center">
-                                <label class="col-md-2 col-form-label">Patient Name</label>
-                                <div class="col-md-6">
-                                    <input class="form-control" name="pname" id="pname" required type="text"/>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="text-danger font-weight-bold" id="pnamespan"></p>
-                                    </div>
+                                <label class="col-md-3 col-form-label">Patient Name</label>
+                                <div class="col-md-4">
+                                    <input class="form-control" name="pname" id="pname" required type="text" />
+                                    <p class="text-danger font-weight-bold" id="pnamespan"></p>
                                 </div>
                             </div>
 
 
                             <div class="form-group row justify-content-center">
-                                <label class="col-md-2 col-form-label">Age</label>
-                                <div class="col-md-6">
+                                <label class="col-md-3 col-form-label">Age</label>
+                                <div class="col-md-4">
                                     <input class="form-control" max="120" min="0" name="age" id="age" required
-                                           type="number"/>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p class="text-danger font-weight-bold" id="agespan"></p>
-                                    </div>
+                                        type="number" />
                                 </div>
                             </div>
 
 
                             <div class="form-group row">
-                                <label class="offset-md-2 col-md-2 col-form-label">Date of Admission</label>
+                                <label class="offset-md-2 col-md-4 col-form-label">Date of Admission</label>
                                 <div class="col-md-4">
                                     <input class="form-control" name="admitdate" id="admitdate" required type="date"
-                                           min="1990-01-01" max="{{today}}">
+                                        min="1990-01-01" max="{{today}}">
                                 </div>
-                                <div class="row">
-                                    <p class="text-danger font-weight-bold" id="admitdatespan"></p>
 
-                                </div>
                             </div>
 
 
                             <div class="form-group row justify-content-center">
-                                <label class="col-md-2 col-form-label">Type of Bed</label>
-                                <div class="col-md-6">
+                                <label class="col-md-3 col-form-label">Type of Bed</label>
+                                <div class="col-md-4">
                                     <select class="form-control" name="bedtype" required>
                                         <option value="">Select bed type</option>
-                                        <option value="General">General Ward</option>
-                                        <option value="Semi Sharing">Semi Sharing</option>
-                                        <option value="Single">Single Room</option>
+                                        <option value="general">General Ward</option>
+                                        <option value="semi Sharing">Semi Sharing</option>
+                                        <option value="single">Single Room</option>
                                     </select>
                                 </div>
                             </div>
 
 
                             <div class="form-group row justify-content-center">
-                                <label class="col-md-2 col-form-label">Address</label>
-                                <div class="col-md-6">
-                                    <textarea class="form-control" cols="5" rows="7" name="address" required></textarea>
+                                <label class="col-md-3 col-form-label">Address</label>
+                                <div class="col-md-4">
+                                    <textarea class="form-control" cols="5" rows="3" name="address" required></textarea>
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="offset-md-2 col-md-2 col-form-label">State</label>
+                                <label class="offset-md-2 col-md-4 col-form-label">State</label>
                                 <div class="col-md-4">
                                     <select class="form-control" id="state" name="state" required>
                                         <option disabled selected value="">Select state......</option>
@@ -97,7 +83,7 @@
 
 
                             <div class="form-group row">
-                                <label class="offset-md-2 col-md-2 col-form-label">City</label>
+                                <label class="offset-md-2 col-md-4 col-form-label">City</label>
                                 <div class="col-md-4">
                                     <select class="form-control" id="city" name="city" required>
                                         <option disabled selected value="">Select city......</option>
@@ -105,15 +91,15 @@
                                 </div>
                             </div>
 
-                            
+
                             <div class="form-group row justify-content-center">
                                 <div class="col-md-10">
                                     <button class="col-md-3 btn btn-primary" name="submit" required type="submit"
-                                            value="Submit">
+                                        value="Submit">
                                         Submit
                                     </button>
                                     <button class="offset-md-1 col-md-3 btn btn-primary" name="submit" required
-                                            type="reset" value="Reset">
+                                        type="reset" value="Reset">
                                         Reset
                                     </button>
                                 </div>
@@ -127,84 +113,9 @@
 </div>
 
 
-<!--    <center><h2>Create Patient</h2></center>-->
-<!--    <div class="row">-->
-<!--        <form action="/admin/create_patient" method="post" onsubmit="return validation()">-->
-<!--            <label>SSN ID</label>-->
-<!--            <input name="ssnid" id="ssnid" required type="number"/>-->
-<!--            <span class="text-danger font-weight-bold" id="ssnidspan"></span>-->
-<!--            <br/><br/>-->
-<!--            <label>Patient Name</label>-->
-<!--            <input name="pname" id="pname" required type="text"/>-->
-<!--            <span class="text-danger font-weight-bold" id="pnamespan"></span>-->
-<!--            <br/><br/>-->
-<!--            <label>Age</label>-->
-<!--            <input max="120" min="0" name="age" id="age" required type="number"/>-->
-<!--            <span class="text-danger font-weight-bold" id="agespan"></span>-->
-<!--            <br/><br/>-->
-<!--            <label>Date of Admission</label>-->
-<!--            <input name="admitdate" id="admitdate" required type="date" min="1990-01-01" max="2100-12-31"/>-->
-<!--            <span class="text-danger font-weight-bold" id="admitdatespan"></span>-->
-<!--            <br/><br/>-->
-<!--            <label>Type of Bed</label>-->
-<!--            <select name="bedtype" required>-->
-<!--                <option value="">Select bed type</option>-->
-<!--                <option value="general">General Ward</option>-->
-<!--                <option value="semi">Semi Sharing</option>-->
-<!--                <option value="single">Single Room</option>-->
-<!--            </select>-->
-<!--            <br/><br/>-->
-<!--            <label> Address </label>-->
-<!--            <textarea cols="5" name="address" rows="1" required></textarea>-->
-<!--            <br/><br/>-->
-<!--            <label>State : </label>-->
-<!--            <select id="state" name="state" required>-->
-<!--                <option disabled selected value="">Select state......</option>-->
-<!--            </select>-->
-<!--            <br/><br/>-->
-<!--            <label>City : </label>-->
-<!--            <select id="city" name="city" required>-->
-<!--                <option disabled selected value="">Select city......</option>-->
-<!--            </select>-->
-<!--            <br/><br/>-->
-<!--            <button name="submit" required type="submit" value="Submit">-->
-<!--                Submit-->
-<!--            </button>-->
-
-<!--            <br/><br/>-->
-<!--            <button name="submit" required type="reset" value="Reset">-->
-<!--                Reset-->
-<!--            </button>-->
-<!--        </form>-->
-<!--    </div>-->
 
 <!-- For State And City interdependent Dropdown -->
 
-<script type="text/javascript">
-    function validation() {
-        var validate = true
-        document.getElementById("ssnidspan").innerHTML = "";
-        document.getElementById("pnamespan").innerHTML = "";
-        var ssnid = document.getElementById("ssnid").value
-
-
-        if (ssnid.length != 9) {
-            document.getElementById("ssnidspan").innerHTML = "Enter 9 digit SSNID, given input length is :" + ssnid.length;
-            validate = false
-        }
-
-        //Patient name
-        var pname = document.getElementById("pname").value
-        // console.log("Pname : "+ pname)
-        // console.log(pname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$"))
-        if (!pname.match("^[a-zA-Z]+$")) {
-            document.getElementById("pnamespan").innerHTML = "Enter appropriate Patient Name";
-            validate = false
-        }
-        return validate
-
-    }
-</script>
 
 <script>
     $(document).ready(function () {
@@ -252,5 +163,4 @@
         });
     });
 </script>
-
 {% endblock %}

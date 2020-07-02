@@ -46,6 +46,8 @@
     <br />
 
     {% if medicine_data %}
+    <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+        <div class="col-md-10">
     <table class="ui celled table" style="width: 100%;" id="medicinedata">
         <thead class="thead-dark">
             <tr>
@@ -74,14 +76,18 @@
             </td>
         </tr>
     </table>
+        </div>
+    </div>
     {% else %}
-    <h2>No Medicines issued to this Patient were found in Pharmacy records!</h2>
+    <div class="text-center text-danger">
+    <p style="font-size: larger;">No Medicines issued to this Patient were found in Pharmacy records!</p>
+</div>
     {% endif %}
 
     <br />
-    <hr />
-    <br />
     {% if test_data %}
+    <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+        <div class="col-md-10">
     <table class="ui celled table" style="width: 100%;" id="testdata">
         <thead class="thead-dark">
             <tr>
@@ -106,11 +112,15 @@
             </td>
         </tr>
     </table>
+        </div>
+    </div>
     {% else %}
-    <h2>
+    <div class="text-center text-danger">
+    <p style="font-size: larger;">
         No Diagnostics Tests for this Patient were found in Diagnostic records!
-    </h2>
+    </p>
 
+</div>
     {% endif %}
 
     <br />
@@ -130,11 +140,12 @@
 
     <form action="/admin/billings" method="POST" onsubmit="return confirm('Confirm Patient Discharge?!')">
         <input type="hidden" value="{{patient_data.pid}}" name="pid" />
-        <button type="submit" value="confirm_bills" name="submit">
+        <button type="submit" class="btn btn-primary" value="confirm_bills" name="submit">
             Confirm Discharge!
         </button>
     </form>
-    <button id="btnprint" class="btn-primary" style="align-self:center">Print Bills</button>
+    <br>
+    <button id="btnprint" class="btn btn-primary" style="align-self:center">Print Bills</button>
 </div>
 
 <script>
@@ -161,35 +172,27 @@
 
             doc.autoTable({
                 html: '#patientdata',
-                theme: 'plain',
-                headStyles: {
-                    fillColor: [204, 75, 51]
-                }
+                theme: 'striped',
+                
             })
 
             doc.autoTable({
                 html: '#medicinedata',
-                theme: 'plain',
+                theme: 'striped',
                 startY: doc.lastAutoTable.finalY + 10,
-                headStyles: {
-                    fillColor: [204, 75, 51]
-                }
+                
             })
             doc.autoTable({
                 html: '#testdata',
-                theme: 'plain',
+                theme: 'striped',
                 startY: doc.lastAutoTable.finalY + 10,
-                headStyles: {
-                    fillColor: [204, 75, 51]
-                }
+                
             })
             doc.autoTable({
                 html: '#grandtotal',
-                theme: 'plain',
+                theme: 'striped',
                 startY: doc.lastAutoTable.finalY + 10,
-                headStyles: {
-                    fillColor: [204, 75, 51]
-                }
+                
             })
             // doc.autoTable(res2.columns, res2.data, {
             //     startY: doc.lastAutoTable.finalY + 50

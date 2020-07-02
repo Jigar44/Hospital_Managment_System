@@ -1,8 +1,7 @@
-{% extends 'diagnostic/home.html' %}
+{% extends 'layout.html' %}
+{% block title %}Diagnostic{% endblock %}
 {% block body %}
-<body>
-
-
+<!-- Displays All Medecines Currently issued to Specific Patient if any -->
   <table class="table">
     <thead class="thead-dark">
     <tr>
@@ -36,6 +35,9 @@
             <table class="ui celled table" style="width:100%;" id="allissuetest">
                 <thead>
                 <tr>
+                  <th colspan="4" class="text-center">Diagnostic Test Issued to Patient</th>
+                </tr>
+                  <tr>
                     <th>Test ID</th>
                     <th>Test Name</th>
                     <th>Charge</th>
@@ -57,54 +59,74 @@
       </div>
 
 {% else %}
-<center><h4>No Diagnostic Tests Issued to patient ID: {{patient_data.pid}} | Name : {{patient_data.pname}} found in the Records!</h4></center>
-  {% endif %} 
+<div class="text-danger text-center">
+<p style="font-size: large;">No Diagnostic Tests Issued to patient ID: {{patient_data.pid}} | Name : {{patient_data.pname}} found in the Records!</p>
+</div>  
+{% endif %} 
   
   <!-- end show issued Test -->
   
   <!-- To show dropdwon of available Tests -->
-     <br>
-     <button id="bissuetestadd">Issue New Tests</button>
-     <br>
+     
+<div class="main">
+  <button style="margin-left: 8vh;" class="btn btn-primary" id="bissuetestadd">Issue New Tests</button>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
   {% if data_alltest %}
   
-  
-  <form action="/diagnostic/issuetest" method="post" onsubmit="return addvalidation()" id="issuenewtestform"
-  style="display: none;">
-
+  <form action="/diagnostic/issuetest" method="post" class="text-white" onsubmit="return addvalidation()"
+  id="issuenewtestform" style="display: none;">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="form-bg form-style-patient">
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <h2>Issue Medicine</h2><br />
+          </div>
+        </div>
   <input type="hidden" name="pid" value="{{patient_data.pid}}"/>
-  <br><br>
-  <label>Select Diagnostic Test From DropDown</label>
-  <br><br>
-  <select name="testname" id="testname" required>
-      <option value="" selected disabled>Select Test ....</option>
-      {% for data in data_alltest %}
-      <option value="{{data}}" id=>{{data}}</option>
-      {% endfor %}
-  </select>
-  <br /><br />
+  
+  <div class="form-group row justify-content-center">
+    <label class="col-md-5 col-form-label">Select Diagnostic Test</label>
+    <div class="col-md-6">
+      <select name="testname" class="form-control" id="testname" required>
+        <option value="" selected disabled>Select Test ....</option>
+        {% for data in data_alltest %}
+        <option value="{{data}}" id=>{{data}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
 
-
-  <label>Charge : </label>
-  <input name="charge" id="charge" readonly type="number" step="0.0001" value=/>
-
-  <br /><br />
-
+  <div class="form-group row justify-content-center">
+    <label class="col-md-5 col-form-label">Charge</label>
+    <div class="col-md-6">
+      <input class="form-control" name="charge" id="charge" readonly type="number" step="0.0001" value= />
+    </div>
+  </div>
 
   <button class="btn btn-primary" name="submit" type="submit" value="issuetest_add">Confirm Add!</button>
   <button class="btn btn-warning" type="reset" value="Reset">Reset</button>
+</div>
+</div>
+</div>
 </form>
+<br>
+
+<input style="margin-left: 8vh;" class="
+btn btn-warning" type="button" value="Back" onclick="history.back()" />
+
 {% else %}
-
-<p>No Diagnostic Tests Facility is Available! Add Diagnostic Test Facility</p>
-
+<div class="text-danger text-center">
+  <p>No Diagnostic Tests Facility is Available! Add Diagnostic Test Facility</p>
+  </div>  
 
 {% endif %}
   
 
-  <button name="logout"><a href="{{url_for('logout')}}">Logout</a></button>
-  <input type="button" value="Back" onclick="history.back()" />
-</body>
+</div>
+</div>
+</div>
 
 <!-- ============================= JS validataion=================== -->
 

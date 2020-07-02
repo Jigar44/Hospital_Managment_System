@@ -97,12 +97,19 @@ def register():
 
 # ==========Admin=========================
 @app.route('/admin')
+def layout():
+    return render_template('admin/home.html')
+
+
 @app.route('/admin/home')
 def adminHome():
     if session.get('role') == 'admin':
         return render_template('admin/home.html')
     else:
         return redirect(url_for('login'))
+
+
+
 
 
 @app.route('/admin/create_patient', methods=['POST', 'GET'])
@@ -231,8 +238,8 @@ def update():
             patient = Patient.query.filter_by(pid=id).first()
             
             if request.form['submit']=='update_patient':
-                return render_template('admin/update_patient.html', data=patient, statecity=dfile,today=datetime.now().date())
-
+                return render_template('admin/update_patient.html',data=patient, 
+                statecity=dfile,today=datetime.now().date())
             if request.form['submit']=='confirmupdate':
                 pname = request.form['pname']
                 age = request.form['age']
@@ -262,7 +269,6 @@ def update():
                     patient.state = state
                 if city:
                     patient.city = city
-                
                 if pname or age or address or admitdate or bedtype or state or city: 
                     result = db.session.commit()
                     flash("Patient Updated Successfully", "success")
@@ -284,7 +290,7 @@ def delete():
             db.session.delete(patient)
             db.session.commit()
             flash(
-                "Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname))
+                "Patient: ID-{} | Name-{} , deleted succefully!".format(patient.pid, patient.pname),"success")
 
         return redirect(url_for('search_patients'))
     else:
@@ -293,12 +299,13 @@ def delete():
 
     # ========Pharmacist============
 
-
 @app.route('/pharmacist')
+def pharmalayout():
+    return render_template('pharmacist/home.html')
 @app.route('/pharmacist/home')
 def pharmacistHome():
     if session.get('role') == 'pharmacist':
-        return render_template('pharmacist/home.html')
+        return render_template('layout.html')
     else:
         return redirect(url_for('login'))
 
@@ -389,6 +396,10 @@ def issuemed_search():
 
 # ========Diagnostic============
 @app.route('/diagnostic')
+def dialayout():
+    return render_template('diagnostic/home.html')
+
+
 @app.route('/diagnostic/home')
 def diagnosticHome():
     if request.method == 'GET' and session.get('role') == 'diagnostic':
@@ -418,7 +429,7 @@ def issuetest_search():
                         patientTest=PatientTest(pid=pid,testid=testfind.testid,testname=testname,charge=charge)
                         db.session.add(patientTest)
                         db.session.commit()
-                        flash("test issued Succefully!","success")
+                        flash("Test issued Succefully!","success")
                 else:
                     flash("Invalid Diagnostic Test Chosen!","danger")
             test=TestDetails.query.filter().all()
