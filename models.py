@@ -23,9 +23,9 @@ class User(db.Model):
 
 
 
-# event.listen(User.__table__,"after_create",
-# DDL(" ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;")
-# )
+event.listen(User.__table__,"after_create",
+DDL(" ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;")
+)
 
 #one
 class Patient(db.Model):
@@ -46,12 +46,12 @@ class Patient(db.Model):
     created_on = db.Column(db.TIMESTAMP, default=datetime.now())
     updated_on = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now(), onupdate=datetime.now())
 
-# event.listen(Patient.__table__,
-#     "after_create",
-#     DDL("""
-#     ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;
-#     """)
-# )
+event.listen(Patient.__table__,
+    "after_create",
+    DDL("""
+    ALTER TABLE %(table)s AUTO_INCREMENT = 100000001;
+    """)
+)
 
 class MedicineDetails(db.Model):
     __tablename__ = 'medicine_details'
@@ -71,7 +71,7 @@ class PatientMedicine(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pid=db.Column(db.Integer, db.ForeignKey('patients.pid',ondelete='CASCADE'))
     medid = db.Column(db.Integer,db.ForeignKey('medicine_details.medid'))
-    medname = db.Column(db.String(100), nullable=False,unique=True)
+    medname = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     rate = db.Column(db.Numeric(10,4), nullable=False)
     amount=db.Column(db.Numeric(10,4), nullable=False,default=(rate*quantity),onupdate=(rate*quantity))
