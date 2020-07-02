@@ -1,8 +1,9 @@
-{% extends 'pharmacist/home.html' %}
+{% extends 'layout.html' %}
+{% block title %}pharmacist{% endblock %}
 {% block body %}
 
 <div class="main">
-  <button class="btn-primary" id="badd">Add new Medicine</button>
+  <button class="btn btn-primary" id="badd">Add new Medicine</button>
 
   <div class="row justify-content-center">
     <div class="col-md-10">
@@ -49,8 +50,8 @@
                 </div>
               </div>
 
-              <button class="btn-primary" name="submit" type="submit" value="add">Confirm Add!</button>
-              <button class="btn-warning" type="reset" value="Reset">Reset</button>
+              <button class="btn btn-primary" name="submit" type="submit" value="add">Confirm Add!</button>
+              <button class="btn btn-warning" type="reset" value="Reset">Reset</button>
 
       </form>
     </div>
@@ -71,10 +72,10 @@
       <th>Rate</th>
       <th>Action</th>
     </tr>
-
-  <tbody>
+</thead>
+  
     {% for data in med_data %}
-
+    <tbody>
     <tr style="text-align: center;">
       <th>{{data.medid}}</th>
       <th>{{data.medname}}</th>
@@ -82,7 +83,7 @@
       <th>{{data.rate}}</th>
       <th>
 
-        <button id="{{data.medid}}" value="{{data.medid}}" class="updbtn btn-warning">
+        <button id="{{data.medid}}" value="{{data.medid}}" class="updbtn btn btn-warning">
           Add Quantity
         </button>
       </th>
@@ -97,7 +98,7 @@
 
   <div class="row justify-content-center">
     <div class="col-md-10">
-      <form action="/pharmacist/resupply" class="text-white" method="post" onsubmit="return updatevalidation()"
+      <form action="/pharmacist/resupply" class="text-white" method="post" onsubmit="return qualityvalidation()"
         id="updateform" style="display: none;">
         <div class="row justify-content-center">
           <div class="col-md-6">
@@ -139,44 +140,7 @@
 <!-- <input class="form-control" type="button" value="Back" onclick="history.back()" /> -->
 
 
-<script type="text/javascript">
-  function updatevalidation() {
-    var validate = true;
-    document.getElementById("updatemedidspan").innerHTML = "";
-    var updatemedid = document.getElementById("updatemedid").value;
 
-    if (updatemedid.length != 9) {
-      document.getElementById("updatemedidspan").innerHTML =
-        "Enter 9 digit medID, given input length is :" + updatemedid.length;
-      validate = false;
-    }
-    return validate;
-  }
-
-  function addvalidation() {
-    var validate = true;
-    document.getElementById("addmedidspan").innerHTML = "";
-    document.getElementById("addmednamespan").innerHTML = "";
-    var addmedid = document.getElementById("addmedid").value;
-
-    if (addmedid.length != 9) {
-      document.getElementById("addmedidspan").innerHTML =
-        "Enter 9 digit medID, given input length is :" + addmedid.length;
-      validate = false;
-    }
-
-    //Patient name
-    var addmedname = document.getElementById("addmedname").value;
-    // console.log("addmedname : "+ addmedname)
-    // console.log(addmedname.match("^[a-zA-Z]+.*[\s][a-zA-Z]+$"))
-    if (!addmedname.match("^[a-zA-Z]+$")) {
-      document.getElementById("addmednamespan").innerHTML =
-        "Enter Alphabetical Medicine Name";
-      validate = false;
-    }
-    return validate;
-  }
-</script>
 
 <script>
   $(document).ready(function () {
