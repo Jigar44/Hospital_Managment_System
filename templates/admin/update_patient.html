@@ -7,18 +7,18 @@
             <div class="form-bg form-style-patient">
                 <div class="row justify-content-center">
                     <div class="col-md-12">
-                        <h2>Update Patient</h2><br/>
+                        <h2>Update Patient</h2><br />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <form action="/admin/update" method='post' onsubmit="return updatevalidation()">
-                            
-                               
+
+
                             <!-- ssnid -->
                             <div class="form-group row justify-content-center">
                                 <label class="col-md-3 col-form-label"> Patient SSN ID</label>
-                                <div class="col-md-4">  
+                                <div class="col-md-4">
                                     <input class="form-control" readonly type="number" value="{{data.ssnid}}" />
                                 </div>
                             </div>
@@ -28,7 +28,8 @@
                             <div class="form-group row justify-content-center">
                                 <label class="col-md-3 col-form-label"> Patient ID</label>
                                 <div class="col-md-4">
-                                    <input class="form-control" name="pid" id="pid" readonly type="number" value="{{data.pid}}" />
+                                    <input class="form-control" name="pid" id="pid" readonly type="number"
+                                        value="{{data.pid}}" />
                                 </div>
                             </div>
 
@@ -70,13 +71,14 @@
                             <div class="form-group row justify-content-center">
                                 <label class="col-md-3 col-form-label">Admit old Date</label>
                                 <div class="col-md-4">
-                                    <input class="form-control"  type="date" readonly value="{{data.admitdate}}" />
+                                    <input class="form-control" type="date" readonly value="{{data.admitdate}}" />
                                 </div>
                             </div>
                             <div class="form-group row justify-content-center">
                                 <label class=" col-md-4 col-form-label"> Admit New Date</label>
                                 <div class="col-md-4">
-                                    <input class="form-control" name="admitdate" id="admitdate" type="date" min="1990-01-01" max="2100-12-31" />
+                                    <input class="form-control" name="admitdate" id="admitdate" type="date"
+                                        min="1990-01-01" max="2100-12-31" />
                                 </div>
                             </div>
 
@@ -98,7 +100,7 @@
                                     </select>
                                 </div>
                             </div>
-                   
+
                             <!-- address -->
                             <div class="form-group row justify-content-center">
                                 <label class="col-md-3 col-form-label"> Patient old Address</label>
@@ -148,24 +150,24 @@
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <input type="submit" class="btn btn-primary" name="submit" value="confirmupdate">
                         </form>
                     </div>
                 </div>
             </div>
-        
-        <div >
-    </div>
-</div>
 
-</div>
+            <div>
+            </div>
+        </div>
+
+    </div>
 </div>
 <script type="text/javascript">
     function validation() {
         var validate = true
-       
-        document.getElementById("pnamespan").innerHTML = "";     
+
+        document.getElementById("pnamespan").innerHTML = "";
 
         //Patient name
         var pname = document.getElementById("pname").value
@@ -218,7 +220,7 @@
         }
 
         $(document).on('change', '#state', function () {
-            $('#city').prop('required',true)
+            $('#city').prop('required', true)
             var state_id = $(this).val();
             if (state_id != '') {
                 load_json_data('city', state_id);

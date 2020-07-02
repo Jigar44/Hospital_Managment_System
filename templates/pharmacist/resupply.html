@@ -36,7 +36,8 @@
               <div class="form-group row justify-content-center">
                 <label class="col-md-3 col-form-label"> Quantity</label>
                 <div class="col-md-6">
-                  <input class="form-control" min="0" max="10000" name="addquantity" id="addquantity" required type="number" />
+                  <input class="form-control" min="0" max="10000" name="addquantity" id="addquantity" required
+                    type="number" />
                   <span class="text-danger font-weight-bold" id="addquantityspan"></span>
                 </div>
               </div>
@@ -52,7 +53,6 @@
 
               <button class="btn btn-primary" name="submit" type="submit" value="add">Confirm Add!</button>
               <button class="btn btn-warning" type="reset" value="Reset">Reset</button>
-
       </form>
     </div>
   </div>
@@ -63,34 +63,41 @@
 
 
 {% if med_data%}
-<table class="table">
-  <thead class="thead-dark">
-    <tr style="text-align: center;">
-      <th>Medicine ID</th>
-      <th>Medicine Name</th>
-      <th>Current Quantity</th>
-      <th>Rate</th>
-      <th>Action</th>
-    </tr>
-</thead>
-  
-    {% for data in med_data %}
-    <tbody>
-    <tr style="text-align: center;">
-      <th>{{data.medid}}</th>
-      <th>{{data.medname}}</th>
-      <th>{{data.quantity}}</th>
-      <th>{{data.rate}}</th>
-      <th>
+<div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+  <div class="col-md-10">
+    <table class="ui celled table" style="width: 100%;" id="testdata">
+      <thead>
+        <tr>
+          <th colspan="5" class="text-center">Available Medicines</th>
+        </tr>
+        <tr style="text-align: center;" class="thead-dark">
+          <th>Medicine ID</th>
+          <th>Medicine Name</th>
+          <th>Current Quantity</th>
+          <th>Rate</th>
+          <th>Action</th>
+        </tr>
+      </thead>
 
-        <button id="{{data.medid}}" value="{{data.medid}}" class="updbtn btn btn-warning">
-          Add Quantity
-        </button>
-      </th>
-    </tr>
-  </tbody>
-  {% endfor %}
-</table>
+      {% for data in med_data %}
+      <tbody>
+        <tr style="text-align: center;">
+          <th>{{data.medid}}</th>
+          <th>{{data.medname}}</th>
+          <th>{{data.quantity}}</th>
+          <th>{{data.rate}}</th>
+          <th>
+
+            <button id="{{data.medid}}" value="{{data.medid}}" class="updbtn btn btn-warning">
+              Add Quantity
+            </button>
+          </th>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+  </div>
+</div>
 {% endif %}
 
 

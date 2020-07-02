@@ -7,30 +7,30 @@
             <div class="form-bg form-style-patient">
                 <div class="row justify-content-center">
                     <div class="col-md-12">
-                        <h2>Create Patient</h2><br/>
+                        <h2>Create Patient</h2><br />
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        
+
                         <form action="/admin/create_patient" method="post" onsubmit="return patientvalidation()">
 
 
                             <div class="form-group row justify-content-center">
                                 <label class="col-md-3 col-form-label">SSN ID</label>
                                 <div class="col-md-4">
-                                    <input class="form-control" name="ssnid" id="ssnid" required type="number"/>
+                                    <input class="form-control" name="ssnid" id="ssnid" required type="number" />
                                     <p class="text-danger font-weight-bold" id="ssnidspan"></p>
-                                </div>                               
+                                </div>
                             </div>
 
 
                             <div class="form-group row justify-content-center">
                                 <label class="col-md-3 col-form-label">Patient Name</label>
                                 <div class="col-md-4">
-                                    <input class="form-control" name="pname" id="pname" required type="text"/>
+                                    <input class="form-control" name="pname" id="pname" required type="text" />
                                     <p class="text-danger font-weight-bold" id="pnamespan"></p>
-                                </div>                                
+                                </div>
                             </div>
 
 
@@ -38,8 +38,8 @@
                                 <label class="col-md-3 col-form-label">Age</label>
                                 <div class="col-md-4">
                                     <input class="form-control" max="120" min="0" name="age" id="age" required
-                                           type="number"/>
-                                </div>                                
+                                        type="number" />
+                                </div>
                             </div>
 
 
@@ -47,9 +47,9 @@
                                 <label class="offset-md-2 col-md-4 col-form-label">Date of Admission</label>
                                 <div class="col-md-4">
                                     <input class="form-control" name="admitdate" id="admitdate" required type="date"
-                                           min="1990-01-01" max="2100-12-31">
+                                        min="1990-01-01" max="2100-12-31">
                                 </div>
-                                
+
                             </div>
 
 
@@ -91,15 +91,15 @@
                                 </div>
                             </div>
 
-                            
+
                             <div class="form-group row justify-content-center">
                                 <div class="col-md-10">
                                     <button class="col-md-3 btn btn-primary" name="submit" required type="submit"
-                                            value="Submit">
+                                        value="Submit">
                                         Submit
                                     </button>
                                     <button class="offset-md-1 col-md-3 btn btn-primary" name="submit" required
-                                            type="reset" value="Reset">
+                                        type="reset" value="Reset">
                                         Reset
                                     </button>
                                 </div>
@@ -125,42 +125,42 @@
 
 <script>
     $(document).ready(function () {
-    parent_id = null
-    load_json_data('state');
+        parent_id = null
+        load_json_data('state');
 
-    function load_json_data(id, parent_id) {
-        var data = JSON.parse('{{ data | tojson | safe}}');
-        var html_code = '';
-        html_code += '<option value="">Select ' + id + '</option>';
-        if (id == 'state') {
-            data = data['states']
-        }
-        if (id == 'city') {
-            data = data['states'][parent_id]['city']
-        }
-
-        $.each(data, function (key, value) {
+        function load_json_data(id, parent_id) {
+            var data = JSON.parse('{{ data | tojson | safe}}');
+            var html_code = '';
+            html_code += '<option value="">Select ' + id + '</option>';
             if (id == 'state') {
-                html_code += '<option value="' + key + '">' + value[id] + '</option>';
-            } else if (id == 'city') {
+                data = data['states']
+            }
+            if (id == 'city') {
+                data = data['states'][parent_id]['city']
+            }
 
-                if (parent_id != null) {
-                    html_code += '<option value="' + key + '">' + value + '</option>';
+            $.each(data, function (key, value) {
+                if (id == 'state') {
+                    html_code += '<option value="' + key + '">' + value[id] + '</option>';
+                } else if (id == 'city') {
 
+                    if (parent_id != null) {
+                        html_code += '<option value="' + key + '">' + value + '</option>';
+
+                    }
                 }
+            });
+            $('#' + id).html(html_code);
+        }
+
+        $(document).on('change', '#state', function () {
+            var state_id = $(this).val();
+            if (state_id != '') {
+                load_json_data('city', state_id);
+            } else {
+                $('#city').html('<option value="">Select city</option>');
             }
         });
-        $('#' + id).html(html_code);
-    }
-
-    $(document).on('change', '#state', function () {
-        var state_id = $(this).val();
-        if (state_id != '') {
-            load_json_data('city', state_id);
-        } else {
-            $('#city').html('<option value="">Select city</option>');
-        }
     });
-});
 </script>
 {% endblock %}
