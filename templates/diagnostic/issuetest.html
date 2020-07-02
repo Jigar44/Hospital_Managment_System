@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <title>Pharmacist: Issue Medicine</title>
-  <script crossorigin="anonymous" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-</head>
-{% include 'flashmess.html' %}
-
+{% extends 'diagnostic/home.html' %}
+{% block body %}
 <body>
 
 
@@ -40,39 +31,38 @@
   <!-- Displays All Medecines Currently issued to Specific Patient if any -->
   {% if data_testissue %}
   <br/>
-  <table style="width: 100%;">
-    <thead>
-      <tr>
-        <th colspan="4" class="text-center">Diagnostic Tests Issued to Patient</th>
-      </tr>
-    <tr>
-      <th>Test ID</th>
-      <th>Test Name</th>
-      <th>Charge</th>
-      <th>Test Done At:</th>
-      
-    </tr>
-  </thead>
-  <tbody>
-    {% for data in data_testissue %}
-    <tr>
-      <th>{{data.testid}}</th>
-      <th>{{data.testname}}</th>
-      <th>{{data.charge}}</th>
-      <th>{{data.created_on}}</th>
-    </tr>
-    {% endfor %}
-  </tbody>
-  </table>
+      <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+        <div class="col-md-10">
+            <table class="ui celled table" style="width:100%;" id="allissuetest">
+                <thead>
+                <tr>
+                    <th>Test ID</th>
+                    <th>Test Name</th>
+                    <th>Charge</th>
+                    <th>Test Done At:</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for data in data_testissue %}
+                    <tr>
+                        <th>{{data.testid}}</th>
+                        <th>{{data.testname}}</th>
+                        <th>{{data.charge}}</th>
+                        <th>{{data.created_on}}</th>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      </div>
 
 {% else %}
 <center><h4>No Diagnostic Tests Issued to patient ID: {{patient_data.pid}} | Name : {{patient_data.pname}} found in the Records!</h4></center>
   {% endif %} 
   
-  <!-- end show issued medicine -->
+  <!-- end show issued Test -->
   
-  <!-- show available medicines in the inventory from which pharmacist can issue meds
-     to patient if inventory not empty -->
+  <!-- To show dropdwon of available Tests -->
      <br>
      <button id="bissuetestadd">Issue New Tests</button>
      <br>
@@ -101,8 +91,8 @@
   <br /><br />
 
 
-  <button name="submit" type="submit" value="issuetest_add">Confirm Add!</button>
-  <button type="reset" value="Reset">Reset</button>
+  <button class="btn btn-primary" name="submit" type="submit" value="issuetest_add">Confirm Add!</button>
+  <button class="btn btn-warning" type="reset" value="Reset">Reset</button>
 </form>
 {% else %}
 
@@ -145,5 +135,10 @@
     });
 </script>
 
+<script>
+    $(document).ready(function () {
+        $('#allissuetest').DataTable();
+    });
+</script>
 
-</html>
+{% endblock %}

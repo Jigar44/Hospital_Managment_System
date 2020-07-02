@@ -1,4 +1,3 @@
-
 import json
 from datetime import datetime
 
@@ -15,6 +14,10 @@ from models import User, Patient,MedicineDetails,PatientMedicine,TestDetails,Pat
 
 migrate = Migrate(app, db)
 
+
+@app.template_filter()
+def currencyFormat(value):
+    return ("{:,.3f}".format(int(value)))
 
 def calcBills(patientObj):
     # calculate admitdate and dischargedate(currentdate) difference
