@@ -58,7 +58,7 @@
                                 <label class="offset-md-2 col-md-2 col-form-label">Date of Admission</label>
                                 <div class="col-md-4">
                                     <input class="form-control" name="admitdate" id="admitdate" required type="date"
-                                           min="1990-01-01" max="2100-12-31">
+                                           min="1990-01-01" max="{{today}}">
                                 </div>
                                 <div class="row">
                                     <p class="text-danger font-weight-bold" id="admitdatespan"></p>
@@ -72,9 +72,9 @@
                                 <div class="col-md-6">
                                     <select class="form-control" name="bedtype" required>
                                         <option value="">Select bed type</option>
-                                        <option value="general">General Ward</option>
-                                        <option value="semi">Semi Sharing</option>
-                                        <option value="single">Single Room</option>
+                                        <option value="General">General Ward</option>
+                                        <option value="Semi Sharing">Semi Sharing</option>
+                                        <option value="Single">Single Room</option>
                                     </select>
                                 </div>
                             </div>

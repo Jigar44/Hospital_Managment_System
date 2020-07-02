@@ -11,19 +11,49 @@
 
 <body>
 
+
+  <table class="table">
+    <thead class="thead-dark">
+    <tr>
+      <th colspan="5" class="text-center">Patient Details</th>
+    </tr>
+      <tr>
+            <th>Patient ID</th>
+            <th>Patient Name</th>
+            <th>Age</th>
+            <th>Type of Bed</th>
+            <th>Admit Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{patient_data.pid}}</td>
+            <td>{{patient_data.pname}}</td>
+            <td>{{patient_data.age}}</td>
+            <td>{{patient_data.bedtype}}</td>
+            <td>{{patient_data.admitdate}}</td>
+        </tr>
+    </tbody>
+
+</table>
+
   <!-- Displays All Medecines Currently issued to Specific Patient if any -->
   {% if data_testissue %}
-  <p>Diagnostic Tests Issued to patient ID: {{pdata['pid']}} | Name : {{pdata['pname']}}</p>
   <br/>
   <table style="width: 100%;">
+    <thead>
+      <tr>
+        <th colspan="4" class="text-center">Diagnostic Tests Issued to Patient</th>
+      </tr>
     <tr>
       <th>Test ID</th>
       <th>Test Name</th>
       <th>Charge</th>
       <th>Test Done At:</th>
       
-      
     </tr>
+  </thead>
+  <tbody>
     {% for data in data_testissue %}
     <tr>
       <th>{{data.testid}}</th>
@@ -32,10 +62,11 @@
       <th>{{data.created_on}}</th>
     </tr>
     {% endfor %}
+  </tbody>
   </table>
 
 {% else %}
-<center><h4>No Diagnostic Tests Issued to patient ID: {{pdata['pid']}} | Name : {{pdata['pname']}} found in the Records!</h4></center>
+<center><h4>No Diagnostic Tests Issued to patient ID: {{patient_data.pid}} | Name : {{patient_data.pname}} found in the Records!</h4></center>
   {% endif %} 
   
   <!-- end show issued medicine -->
@@ -51,8 +82,7 @@
   <form action="/diagnostic/issuetest" method="post" onsubmit="return addvalidation()" id="issuenewtestform"
   style="display: none;">
 
-  <input type="hidden" name="pid" value="{{pdata['pid']}}"/>
-  <input type="hidden" name="pname" value="{{pdata['pname']}}"/>
+  <input type="hidden" name="pid" value="{{patient_data.pid}}"/>
   <br><br>
   <label>Select Diagnostic Test From DropDown</label>
   <br><br>

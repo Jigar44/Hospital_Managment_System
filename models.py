@@ -71,7 +71,7 @@ class PatientMedicine(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pid=db.Column(db.Integer, db.ForeignKey('patients.pid',ondelete='CASCADE'))
     medid = db.Column(db.Integer,db.ForeignKey('medicine_details.medid'))
-    medname = db.Column(db.String(100), nullable=False,unique=True)
+    medname = db.Column(db.String(100), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     rate = db.Column(db.Numeric(10,4), nullable=False)
     amount=db.Column(db.Numeric(10,4), nullable=False,default=(rate*quantity),onupdate=(rate*quantity))
