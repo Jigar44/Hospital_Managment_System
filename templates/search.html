@@ -1,9 +1,8 @@
-{% if session.get('role') == 'admin' %}
+{% if session.get('role') == 'admin'   %}
     {% extends 'admin/home.html' %}
-{% elif session.get('role') == 'pharmacist' %}
+{% elif session.get('role') == 'pharmacist'   %}
     {% extends 'pharmacist/home.html' %}
-{% elif session.get('role') == 'diagnostic' %}
-    <p>Hello</p>
+{% elif session.get('role') == 'diagnostic'   %}
     {% extends 'diagnostic/home.html' %}
 {% endif %}
 
@@ -113,6 +112,22 @@
                     </button>
                 </form>
             </div>
+
+            {% if data_all.pstatus=='active' %}
+<form action="/admin/billings" method="POST">
+    <input type="hidden" value="{{data_all.pid}}" name="pid" />
+    <div class="col-md-12">
+        <button name="submit" class=" btn btn-primary" value="bill_patient" type="submit">Check Patient Billings</a></button>
+        </button>
+    </div>
+</form>
+<br>
+<br>
+{% else %}
+
+<p>No outstanding bills are available since patient is aleady Dischaged!</p>
+{% endif %}
+
         </div>
     {% endif %}
 
