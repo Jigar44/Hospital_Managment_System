@@ -3,9 +3,9 @@
 {% block body %}
 
 
-<div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-  <div class="col-md-10">
-    <table class="ui selectable celled table" style="width:100%;">
+<div >
+ 
+    <table class=" table" >
       <thead>
         <tr>
           <th colspan="5" class="text-center">Patient Details</th>
@@ -29,16 +29,15 @@
       </tbody>
 
     </table>
-  </div>
+  
 </div>
 
 <br>
 <!-- Displays All Medecines Currently issued to Specific Patient if any -->
 {% if data_medissue %}
 
-<div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-  <div class="col-md-10">
-    <table class="ui selectable celled table" style="width:100%;" id="issuemedicine">
+<div >  
+    <table class="table" id="issuemedicine">
       <thead>
         <tr>
           <th colspan="5" class="text-center">Medicines Issued to Patient</th>
@@ -62,8 +61,7 @@
         </tr>
         {% endfor %}
       </tbody>
-    </table>
-  </div>
+    </table>  
 </div>
 
 {% else %}
@@ -125,9 +123,9 @@
   </div>
 </div>
 
-<div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-  <div class="col-md-10">
-    <table class="ui celled table" style="width:100%;" id="allmedicine">
+<div >
+  
+    <table class=" table"  id="allmedicine">
       <thead>
         <tr>
           <th class="text-center" colspan="5">Available Medicines in Pharmacy</th>
@@ -150,7 +148,7 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
+ 
 </div>
 <br />
 

@@ -1,67 +1,79 @@
 {% extends 'layout.html' %}
 {% block title %}Admin{% endblock %}
+
+
+
+
 {% block body %}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet" >
+<link href="https://cdn.datatables.net/1.10.21/css/dataTables.semanticui.min.css" rel="stylesheet" >
+
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/dataTables.semanticui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
+
 <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
 <!-- <script src="js/dist/jspdf.plugin.autotable.js"></script> -->
 <script src="{{url_for('static',filename='js/dist/jspdf.plugin.autotable.js')}}"></script>
 <div class="main">
 
     <!-- Patient Details -->
-    <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-        <div class="col-md-10">
-            <table class="ui selectable celled table" style="width:100%;">
-                <tr>
-                    <th colspan="7" class="text-center">Patient Details</th>
-                </tr>
+    <div>
 
-                <tr class="thead-dark">
-                    <th>Patient ID</th>
-                    <th>Patient Name</th>
-                    <th>Age</th>
-                    <th>Address</th>
-                    <th>Type of Room</th>
-                    <th>Admit Date</th>
-                    <th>Dishcarge Date</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{patient_data.pid}}</td>
-                        <td>{{patient_data.pname}}</td>
-                        <td>{{patient_data.age}}</td>
-                        <td style="max-width: 100px;">
-                            <div style="max-height: 100px; overflow-x: hidden; overflow-y: auto;">
-                                {{patient_data.address}}
-                            </div>
-                        </td>
-                        <td>{{patient_data.bedtype}}</td>
-                        <td>{{patient_data.admitdate}}</td>
-                        <td>{{today}}</td>
-                    </tr>
-                </tbody>
+        <table class="table">
+            <tr>
+                <th colspan="7" class="text-center">Patient Details</th>
+            </tr>
+
+            <tr class="thead-dark">
+                <th>Patient ID</th>
+                <th>Patient Name</th>
+                <th>Age</th>
+                <th>Address</th>
+                <th>Type of Room</th>
+                <th>Admit Date</th>
+                <th>Dishcarge Date</th>
+            </tr>
+            
+            <tbody>
                 <tr>
-                    <td colspan="7" class="text-center">
-                        Days : {{bill_total[0]['days']}} , Room Charge : Rs.
-                        {{bill_total[0]['bedtotal'] | currencyFormat}}
+                    <td>{{patient_data.pid}}</td>
+                    <td>{{patient_data.pname}}</td>
+                    <td>{{patient_data.age}}</td>
+                    <td style="max-width: 100px;">
+                        <div style="max-height: 100px; overflow-x: hidden; overflow-y: auto;">
+                            {{patient_data.address}}
+                        </div>
                     </td>
+                    <td>{{patient_data.bedtype}}</td>
+                    <td>{{patient_data.admitdate}}</td>
+                    <td>{{today}}</td>
                 </tr>
-            </table>
-        </div>
+            </tbody>
+            <tr>
+                <td colspan="7" class="text-center">
+                    Days : {{bill_total[0]['days']}} , Room Charge : Rs.
+                    {{bill_total[0]['bedtotal'] | currencyFormat}}
+                </td>
+            </tr>
+        </table>
+
     </div>
 
     <br />
-
+<hr>
 
     <!-- Pharmacy Details -->
     {% if medicine_data %}
-    <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+    <div class="row justify-content-center" style="margin-left: 60px; margin-right: 50px;">
         <div class="col-md-10">
             <table class="ui celled table" style="width: 100%;" id="medicinedata">
-                <thead>
+                <thead >
                     <tr>
-                        <th colspan="4" class="text-center">Pharmacy Bills</th>
+                        <th style="background-color:#212529;" colspan="4" class="text-center text-white">Pharmacy Bills</th>
                     </tr>
-                    <tr class="thead-dark">
+                    <tr>
                         <th>Medicine Name</th>
                         <th>Quantity</th>
                         <th>Rate</th>
@@ -93,35 +105,37 @@
     {% endif %}
 
     <br />
+    <br>
+    <br><hr>
     <!-- Diagnostic Bills -->
     {% if test_data %}
-    <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+    <div class="row justify-content-center" style="margin-left: 40vh; margin-right: 50px;">
         <div class="col-md-10">
-            <table class="ui celled table" style="width: 100%;" id="testdata">
-                <thead>
-                    <tr>
-                        <th colspan="2" class="text-center">Diagnostic Bills</th>
-                    </tr>
-                    <tr class="thead-dark">
-                        <th>Diagnostic Test Name</th>
-                        <th>Ammount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for data in test_data %}
-                    <tr>
-                        <td>{{data.testname}}</td>
-                        <td>{{data.charge}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+            <table class="ui celled table" style="width: 80%; " id="testdata">
+            <thead>
                 <tr>
-                    <td colspan="3" class="text-center">
-                        Bills for Diagnostics : Rs. {{bill_total[2] | currencyFormat}}
-                    </td>
+                    <th style="background-color:#212529;" colspan="2" class="text-center text-white">Diagnostic Bills</th>
                 </tr>
-            </table>
-        </div>
+                <tr class="thead-dark">
+                    <th>Diagnostic Test Name</th>
+                    <th>Ammount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in test_data %}
+                <tr>
+                    <td>{{data.testname}}</td>
+                    <td>{{data.charge}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tr>
+                <td colspan="3" class="text-center">
+                    Bills for Diagnostics : Rs. {{bill_total[2] | currencyFormat}}
+                </td>
+            </tr>
+        </table>
+</div>
     </div>
     {% else %}
     <div class="text-center text-danger">
@@ -132,21 +146,21 @@
     </div>
     {% endif %}
 
-    <br />
+    <br /><hr>
     <!-- grand total -->
-    <div class="row justify-content-center" style="margin-left: 30vh; margin-right: 50px;">
-        <div class="col-md-5">
-            <table class="table" id="grandtotal">
-                <thead class="thead-dark">
-                    <th>Grand Total :</th>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td> Rs. {{bill_total[3] | currencyFormat}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div>
+
+        <table class="table" id="grandtotal">
+            <thead class="thead-dark">
+                <th>Grand Total :</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> Rs. {{bill_total[3] | currencyFormat}}</td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
     <br>
     <form action="/admin/billings" method="POST" onsubmit="return confirm('Confirm Patient Discharge?!')">

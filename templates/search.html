@@ -61,9 +61,9 @@
 </div>
 <!-- admin search -->
 {% if data_all and session.get('role')=='admin' %}
-<div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-    <div class="col-md-10">
-        <table class="ui selectable celled table" style="width:100%;">
+<div>
+    
+        <table class="table">
             <thead>
                 <tr class="table-head">
                     <th>Patient ID</th>
@@ -95,8 +95,9 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    
 </div>
+<br>
 <div class="row justify-content-center row-button">
     <div class="offset-md-1 col-md-2">
         <form action="/admin/update" method="POST">
@@ -140,9 +141,9 @@
 
 <!-- pharmacist search -->
 {% if data_active and (session.get('role')=='pharmacist' or session.get('role')=='diagnostic') %}
-<div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-    <div class="col-md-10">
-        <table class="ui selectable celled table" style="width:100%;">
+<div>
+    
+        <table class="table">
             <tr>
                 <th>Patient ID</th>
                 <th>SSN ID</th>
@@ -174,7 +175,7 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    
 </div>
 
 {% endif %}
@@ -184,7 +185,7 @@
     <input type="hidden" value="{{ data_active.pname }}" name="pname" />
     <div class="row-button row justify-content-center">
         <div class="col-md-4">
-            <button class="btn btn-primary" name="submit" value="issuemed_search" type="submit">Issue New
+            <button class="btn btn-primary btn-issue" name="submit" value="issuemed_search" type="submit">Issue New
                 Medicine to Patient</button>
         </div>
     </div>
@@ -196,8 +197,8 @@
     <input type="hidden" value="{{ data_active.pname }}" name="pname" />
 
     <div class="row-button row justify-content-center">
-        <div class="col-md-3">
-            <button class="btn btn-primary" name="submit" value="issuetest_search" type="submit">Add Diagnostic Tests
+        <div class="col-md-4">
+            <button class="btn btn-primary btn-test" name="submit" value="issuetest_search" type="submit">Add Diagnostic Tests
                 for Patient</a></button>
         </div>
     </div>

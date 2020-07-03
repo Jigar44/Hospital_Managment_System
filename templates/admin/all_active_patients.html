@@ -5,9 +5,9 @@
     <center>
         <h3>All Active Patients</h3>
     </center>
-    <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-        <div class="col-md-10">
-            <table class="ui selectable celled table" style="width:100%;">
+    <div>
+        <table class="table">
+            <thead>
                 <tr>
                     <th scope='col'>Patient ID</th>
                     <th scope='col'>SSN ID</th>
@@ -20,27 +20,26 @@
                     <th scope='col'>City</th>
                     <th scope='col'>Admit Date</th>
                 </tr>
-
-                {% for patient in data %}
-                <tbody>
-                    <tr>
-                        <td>{{patient.pid}}</td>
-                        <td>{{patient.ssnid}}</td>
-                        <td>{{patient.pname}}</td>
-                        <td>{{patient.age}}</td>
-                        <td>{{patient.bedtype}}</td>
-                        <td>{{patient.pstatus}}</td>
-                        <td>
-                            <div style="overflow-x: hidden;overflow-y:scroll;height: 75px;">{{patient.address}}</div>
-                        </td>
-                        <td>{{patient.state}}</td>
-                        <td>{{patient.city}}</td>
-                        <td>{{patient.admitdate}}</td>
-                    </tr>
-                </tbody>
-                {% endfor %}
-            </table>
-        </div>
+            </thead>
+            {% for patient in data %}
+            <tbody>
+                <tr>
+                    <td>{{patient.pid}}</td>
+                    <td>{{patient.ssnid}}</td>
+                    <td>{{patient.pname}}</td>
+                    <td>{{patient.age}}</td>
+                    <td>{{patient.bedtype}}</td>
+                    <td>{{patient.pstatus}}</td>
+                    <td>
+                        <div style="overflow-x: hidden;overflow-y:scroll;height: 75px;">{{patient.address}}</div>
+                    </td>
+                    <td>{{patient.state}}</td>
+                    <td>{{patient.city}}</td>
+                    <td>{{patient.admitdate}}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
     </div>
 </div>
 

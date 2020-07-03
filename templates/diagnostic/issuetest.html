@@ -2,9 +2,9 @@
 {% block title %}Diagnostic{% endblock %}
 {% block body %}
 <!-- Displays All Medecines Currently issued to Specific Patient if any -->
-<div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-  <div class="col-md-10">
-    <table class="ui celled table" style="width: 100%;" id="testdata">
+<div >
+  
+    <table class=" table"  id="testdata">
       <thead>
         <tr>
           <th colspan="5" class="text-center">Patient Details</th>
@@ -28,15 +28,15 @@
       </tbody>
 
     </table>
-  </div>
+  
 </div>
 
 <!-- Displays All Medecines Currently issued to Specific Patient if any -->
 {% if data_testissue %}
 <br />
-<div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-  <div class="col-md-10">
-    <table class="ui celled table" style="width:100%;" id="allissuetest">
+<div>
+  
+    <table class="table"  id="allissuetest">
       <thead>
         <tr>
           <th colspan="4" class="text-center">Diagnostic Test Issued to Patient</th>
@@ -59,7 +59,7 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
+  
 </div>
 
 {% else %}
