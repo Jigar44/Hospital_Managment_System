@@ -36,7 +36,7 @@
                 <table class="ui celled table" style="width:100%;" id="issuemedicine">
                     <thead class="thead-dark">
                       <tr>
-                        <th colspan="4" class="text-center">Medicines Issued to Patient</th>
+                        <th colspan="5" class="text-center">Medicines Issued to Patient</th>
                       </tr>
                         <th>Medicine ID</th>
                         <th>Medicine Name</th>
@@ -53,6 +53,7 @@
                             <th>{{ data.quantity }}</th>
                             <th>{{ data.rate }}</th>
                             <th>{{ data.amount }}</th>
+                            
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -61,9 +62,9 @@
         </div>
 
     {% else %}
-    <div class="text-center text-success" style="margin-top: 30px;">
-      <p>No Issued medicines records found!</p>
-    </div>
+    
+      <h3 class="text-center">No Issued medicines records found!</h3>
+    
     {% endif %}
 
     <!-- end show issued medicine -->
@@ -75,7 +76,7 @@
          
          <div class="row justify-content-center">
            <div class="col-md-7">
-             <button class="btn btn-primary" id="bissuemedadd">Issue new Medicine</button>
+             <h3>Issue new Medicine, Use Medicine Available table to search and issue Medicines.</h3>
        
     {% if data_allmed %}
 
@@ -95,7 +96,7 @@
     <div class="form-group row justify-content-center">
       <label class="col-md-5 col-form-label">Enter Medicine Name</label>
       <div class="col-md-6">
-        <input class="form-control"  name="medname" id="medname" required type="text" />
+        <input class="form-control"  name="medname" id="medname" required readonly type="text" />
         <span class="text-danger font-weight-bold" id="mednamespan"></span>
       </div>
     </div>
@@ -130,15 +131,21 @@
                         <th>Medicine Name</th>
                         <th>Current Quantity</th>
                         <th>Rate</th>
+                        <th>action</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for data in data_allmed %}
                         <tr>
-                            <th>{{ data.medid }}</th>
-                            <th>{{ data.medname }}</th>
-                            <th>{{ data.quantity }}</th>
-                            <th>{{ data.rate }}</th>
+                            <td>{{ data.medid }}</td>
+                            <td>{{ data.medname }}</td>
+                            <td>{{ data.quantity }}</td>
+                            <td>{{ data.rate }}</td>
+                            <td>
+                              <button id="{{ data.medid }}" value="{{ data.medname }}" class="addmedbtn btn btn-warning">
+                                  Issue this medicine
+                              </button>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -174,21 +181,20 @@
     window.history.replaceState("", "", window.location.href);
   });
 </script>
-
-    <script>
-        $(document).ready(function () {
-            $("#bissuemedadd").click(function () {
-                $("#issuenewmedform").show();
-
-            });
-        });
-    </script>
+<script>
+  $(document).ready(function () {
+      $(".addmedbtn").click(function () {
+          $("#issuenewmedform").show();
+          $("#issuenewmedform").focus();
+          $("#medname").val($(this).val());
+      });
+  });
+</script>
     <script>
         $(document).ready(function () {
             $('#allmedicine').DataTable();
             $('#issuemedicine').DataTable();
         });
-
     </script>
 
 {% endblock %}

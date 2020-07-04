@@ -1,12 +1,15 @@
 import json
+import locale
 from datetime import datetime
-
 from flask import Flask, render_template, request, session, flash, redirect, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_,func
 from sqlalchemy.sql import label
 from config import Config
+
+locale.setlocale(locale.LC_MONETARY, 'en_IN')
+
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
@@ -17,7 +20,10 @@ migrate = Migrate(app, db)
 
 @app.template_filter()
 def currencyFormat(value):
-    return ("{:,.3f}".format(int(value)))
+    symbol=locale.localeconv()['currency_symbol']
+    ans=((locale.currency(int(value),grouping=True))).replace(symbol,'')
+    return ans
+    
 
 def calcBills(patientObj):
     # calculate admitdate and dischargedate(currentdate) difference
