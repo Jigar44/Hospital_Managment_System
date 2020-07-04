@@ -31,4 +31,12 @@
 ## Status
 
  - App development Still in Progress...
- 
+  
+ ## Creators
+- Backend 
+    - Vikash Singh : https://github.com/vikashsing21
+- Frontend
+    - Jay Vachhani : https://github.com/JayuVachhani
+    - Jigar Rabadiya : https://github.com/Jigar44
+
+
