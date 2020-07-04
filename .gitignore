@@ -4,7 +4,7 @@ venv
 migrations
 .flaskenv
 .vscode
-
+jaychanges
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -69,45 +69,7 @@
         </div>
     </div>
 
-    {% if med_data %}
-        <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
-            <div class="col-md-10">
-                <table class="ui selectable celled table" style="width:100%;">
-                    <thead>
-                    <tr style="text-align: center;">
-                        <th>Medicine ID</th>
-                        <th>Medicine Name</th>
-                        <th>Current Quantity</th>
-                        <th>Rate</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for data in med_data %}
-                        <tr style="text-align: center;">
-                            <th>{{ data.medid }}</th>
-                            <th>{{ data.medname }}</th>
-                            <th>{{ data.quantity }}</th>
-                            <th>{{ data.rate }}</th>
-                            <th>
-                                <button id="{{ data.medid }}" value="{{ data.medid }}" class="updbtn btn btn-warning">
-                                    Add Quantity
-                                </button>
-                            </th>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                 
-                </table>
-            </div>
-        </div>
-    {% else %}
-    <div class="text-center text-danger">
-        <p>No Medicine Available in the Inventory! Add new Medicine</p>
-      </div>
-    {% endif %}
-
-
+    
     <div class="main">
         <div class="row justify-content-center">
             <div class="col-md-10">
@@ -153,6 +115,47 @@
         </div>
     </div>
 
+
+    {% if med_data %}
+        <div class="row justify-content-center" style="margin-left: 50px; margin-right: 50px;">
+            <div class="col-md-10">
+                <table class="ui selectable celled table" style="width:100%;" id="allmedicine">
+                    <thead>
+                    <tr style="text-align: center;">
+                        <th>Medicine ID</th>
+                        <th>Medicine Name</th>
+                        <th>Current Quantity</th>
+                        <th>Rate</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for data in med_data %}
+                        <tr style="text-align: center;">
+                            <th>{{ data.medid }}</th>
+                            <th>{{ data.medname }}</th>
+                            <th>{{ data.quantity }}</th>
+                            <th>{{ data.rate }}</th>
+                            <th>
+                                <button id="{{ data.medid }}" value="{{ data.medid }}" class="updbtn btn btn-warning">
+                                    Add Quantity
+                                </button>
+                            </th>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                 
+                </table>
+            </div>
+        </div>
+    {% else %}
+    <div class="text-center text-danger">
+        <p>No Medicine Available in the Inventory! Add new Medicine</p>
+      </div>
+    {% endif %}
+
+
+
     <!-- <input class="form-control" type="button" value="Back" onclick="history.back()" /> -->
 
     <script>
@@ -173,6 +176,12 @@
                 $("#updatemedid").val($(this).val());
             });
         });
+    </script>
+     <script>
+        $(document).ready(function () {
+            $('#allmedicine').DataTable();
+        });
+
     </script>
 
 

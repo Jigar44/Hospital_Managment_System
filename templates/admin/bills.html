@@ -170,6 +170,8 @@
             // var doc = new jsPDF('p','pt', 'a4', true);
             var doc = new jsPDF();
 
+            $("#testdata").DataTable().destroy();
+            $("#medicinedata").DataTable().destroy();
             doc.autoTable({
                 html: '#patientdata',
                 theme: 'striped',
@@ -199,6 +201,8 @@
             // });
 
             doc.save('hospital-bills.pdf');
+            $("#testdata").DataTable();
+            $("#medicinedata").DataTable();
         });
 
     });
